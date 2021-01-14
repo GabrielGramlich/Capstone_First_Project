@@ -1,12 +1,3 @@
-'''
-This program is a game of checkers. Players select a board size and then take turns moving until all pieces run out.
-
-The program uses dictionaries with lists as their keys. As Python lists are mutable and dictionary keys are hashed
-for quick searching, the lists should at no point be changed. They are stored as lists for the purpose of recognizing
-squares on the board owned by a player, but when a change in possession, placement or piece type occurs, the key is
-removed from the list and a new value is added. Changing this logic will break the code.
-'''
-
 import sys, time
 
 black_pieces = {}
@@ -119,7 +110,7 @@ def get_playable_rows():
 				row = row + ' * |'
 			elif str([x,y]) in pieces_removed:
 				if pieces_removed.get(str([x,y])) == 'N':
-					row = row + '[' + last_token_removed + ']|'
+					row = row + '>' + last_token_removed + '<|'
 				elif pieces_removed.get(str([x,y])) == 'K':
 					row = row + '{' + last_token_removed + '}|'
 			else:
@@ -192,7 +183,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 
 	if jumped_piece != None:
 		opponent_pieces.pop(str([int(jumped_piece[0]),int(jumped_piece[1])]))
-		pieces_removed[str(jumped_piece)] = jumped_piece_type
+		pieces_removed[str([int(jumped_piece[0]),int(jumped_piece[1])])] = jumped_piece_type
 		last_token_removed = token
 		if can_jump(move_selection, player_pieces, opponent_pieces):
 			turn = turn - 1
@@ -243,7 +234,7 @@ def select_move(piece, player_pieces, opponent_pieces):
 				invalid = False
 				return [x,y], 'N', None, None
 			elif empty(x,y,player_pieces,opponent_pieces) and two_spaces_away(x,y,piece) and jumping(jumped_piece,opponent_pieces):
-					jumped_piece_type = opponent_pieces.get(str(jumped_piece))
+					jumped_piece_type = opponent_pieces.get(str([int(jumped_piece[0]),int(jumped_piece[1])]))
 					invalid = False
 					return [x,y], 'N', jumped_piece, jumped_piece_type
 			else:
