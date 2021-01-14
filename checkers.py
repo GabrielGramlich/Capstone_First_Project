@@ -63,17 +63,17 @@ def create_starting_pieces():
 			if x < ((board_size - 2) / 2):	# If on black's side of the board
 				if x % 2 != 0:
 					if y % 2 != 0:
-						black_pieces.append([x,y])
+						black_pieces.append([x,y,'N'])
 				else:
 					if y % 2 == 0:
-						black_pieces.append([x,y])
+						black_pieces.append([x,y,'N'])
 			elif x > (((board_size - 2) / 2) + 1):	# If on red's side of the board
 				if x % 2 != 0:
 					if y % 2 != 0:
-						red_pieces.append([x,y])
+						red_pieces.append([x,y,'N'])
 				else:
 					if y % 2 == 0:
-						red_pieces.append([x,y])
+						red_pieces.append([x,y,'N'])
 
 
 def display_board():
@@ -102,13 +102,13 @@ def get_playable_rows():
 		else:
 			row = str(x + 1) + ' |'
 		for y in range(board_size):
-			if [x,y] in black_pieces:
+			if [x,y,'N'] in black_pieces:
 				row = row + ' X |'
-			elif [x,y] in red_pieces:
+			elif [x,y,'N'] in red_pieces:
 				row = row + ' O |'
 			elif (x % 2 == 0 and y % 2 != 0) or (x % 2 != 0 and y % 2 == 0):
 				row = row + ' * |'
-			elif [x,y] in pieces_removed:
+			elif [x,y,'N'] in pieces_removed:
 				row = row + '{' + last_token_removed + '}|'
 			else:
 				row = row + '   |'
@@ -155,17 +155,18 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 
 	if jumped:
 		print('\nLast piece moved:')
-		print(str(moved_piece[1]) + ',' + str(moved_piece[0]))
+		print(str(moved_piece[1] + 1) + ',' + str(moved_piece[0] + 1))
 		piece_selection = moved_piece
 	else:
 		piece_selection = select_piece(player_pieces)
 	move_selection, jumped_piece = select_move(piece_selection, player_pieces, opponent_pieces)
 
 	jumped = False
+	if last_token_removed != token:
+		pieces_removed.clear()
+
 	if jumped_piece != None:
 		opponent_pieces.remove(jumped_piece)
-		if last_token_removed != token:
-			pieces_removed.clear()
 		pieces_removed.append(jumped_piece)
 		last_token_removed = token
 		if can_jump(move_selection, player_pieces, opponent_pieces):
@@ -182,6 +183,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 
 
 def select_piece(player_pieces):
+	# TODO Validate that this piece can move
 	invalid = True
 	print('\nPlease select which piece you would like to move.')
 	while invalid:
@@ -190,9 +192,9 @@ def select_piece(player_pieces):
 			y = int(input('Choose a number on the x axis: ')) - 1
 			refresh_rate = 3
 			x = int(input('Choose a number on the y axis: ')) - 1
-			if [x,y] in player_pieces:
+			if [x,y,'N'] in player_pieces:
 				invalid = False
-				return [x,y]
+				return [x,y,'N']
 			else:
 				refresh(3)
 				print('Invalid selection. Please select a different piece.')
@@ -213,13 +215,13 @@ def select_move(piece, player_pieces, opponent_pieces):
 			y = int(input('Choose a number on the x axis: ')) - 1
 			refresh_rate = 3
 			x = int(input('Choose a number on the y axis: ')) - 1
-			jumped_piece = [((x + piece[0]) / 2),((y + piece[1]) / 2)]
+			jumped_piece = [((x + piece[0]) / 2),((y + piece[1]) / 2),'N']
 			if empty(x,y,player_pieces,opponent_pieces) and one_space_away(x,y,piece):
 				invalid = False
-				return [x,y], None
+				return [x,y,'N'], None
 			elif empty(x,y,player_pieces,opponent_pieces) and two_spaces_away(x,y,piece) and jumping(jumped_piece,opponent_pieces):
 					invalid = False
-					return [x,y], jumped_piece
+					return [x,y,'N'], jumped_piece
 			else:
 				refresh(3)
 				print('Invalid selection. Please select a different square.')
@@ -229,7 +231,7 @@ def select_move(piece, player_pieces, opponent_pieces):
 
 
 def empty(x,y,player_pieces,opponent_pieces):
-	if [x,y] not in player_pieces and [x,y] not in opponent_pieces:
+	if [x,y,'N'] not in player_pieces and [x,y,'N'] not in opponent_pieces:
 		return True
 	else:
 		return False
