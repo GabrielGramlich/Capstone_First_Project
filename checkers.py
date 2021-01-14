@@ -303,13 +303,17 @@ def jumping(jumped_piece,opponent_pieces):
 def can_jump(selection, player_pieces, opponent_pieces):
 	possible = False
 	if str([selection[0] - 1, selection[1] - 1]) in opponent_pieces and str([selection[0] - 2, selection[1] - 2]) not in player_pieces and str([selection[0] - 2, selection[1] - 2]) not in opponent_pieces:
-		possible = True
+		if x-2 >= 0 and y-2 >= 0:
+			possible = True
 	if str([selection[0] + 1, selection[1] - 1]) in opponent_pieces and str([selection[0] + 2, selection[1] - 2]) not in player_pieces and str([selection[0] + 2, selection[1] - 2]) not in opponent_pieces:
-		possible = True
+		if x+2 <= (board_size - 1) and y-2 >= 0:
+			possible = True
 	if str([selection[0] - 1, selection[1] + 1]) in opponent_pieces and str([selection[0] - 2, selection[1] + 2]) not in player_pieces and str([selection[0] - 2, selection[1] + 2]) not in opponent_pieces:
-		possible = True
+		if x-2 >= 0 and y+2 <= (board_size - 1):
+			possible = True
 	if str([selection[0] + 1, selection[1] + 1]) in opponent_pieces and str([selection[0] + 2, selection[1] + 2]) not in player_pieces and str([selection[0] + 2, selection[1] + 2]) not in opponent_pieces:
-		possible = True
+		if x+2 <= (board_size - 1) and y+2 <= (board_size - 1):
+			possible = True
 
 	return possible
 
