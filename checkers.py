@@ -128,24 +128,34 @@ def propogate_pieces(cap_row, filler_row, playable_rows):
 
 def play():
 	turn = 0
+	jumped = False
+	move_selection = []
 	while True:
 		turn = turn + 1
 		if turn % 2 != 0:
 			print('Round {}, player X goes'.format(turn))
-			turn = player_turn(black_pieces, red_pieces, turn)
+			turn, jumped, move_selection = player_turn(black_pieces, red_pieces, turn, jumped, move_selection)
 		else:
 			print('Round {}, player O goes'.format(turn))
-			turn = player_turn(red_pieces, black_pieces, turn)
+			turn, jumped, move_selection = player_turn(red_pieces, black_pieces, turn, jumped, move_selection)
 
 
-def player_turn(player_pieces, opponent_pieces, turn):
-	piece_selection = select_piece(player_pieces)
+def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece):
+	if jumped:
+		print('\nLast piece moved:')
+		print(str(moved_piece[1]) + ',' + str(moved_piece[0]))
+		piece_selection = moved_piece
+	else:
+		piece_selection = select_piece(player_pieces)
 	move_selection, jumped_piece = select_move(piece_selection, player_pieces, opponent_pieces)
+
+	jumped = False
 	if jumped_piece != None:
 		opponent_pieces.remove(jumped_piece)
 		if can_jump(move_selection, player_pieces, opponent_pieces):
 			# TODO Make them grab the same piece
 			turn = turn - 1
+			jumped = True
 	player_pieces.remove(piece_selection)
 	player_pieces.append(move_selection)
 	player_pieces.sort()
@@ -153,7 +163,7 @@ def player_turn(player_pieces, opponent_pieces, turn):
 	refresh((36-((12-board_size)*2)))
 	display_board()
 
-	return turn
+	return turn, jumped, move_selection
 
 
 def select_piece(player_pieces):
