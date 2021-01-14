@@ -4,7 +4,6 @@ import sys, time
 # TODO Add piece grabbed counter
 # TODO Change round/turn formatting
 # TODO Unselect a piece
-# TODO Fix double move not leaving
 
 
 black_pieces = {}
