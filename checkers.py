@@ -1,5 +1,7 @@
 import sys, time
 
+# TODO check if tokens are grabbking K's
+
 black_pieces = {}
 red_pieces = {}
 board_size = 0
@@ -135,7 +137,6 @@ def convert_to_list(string):
 	return back_to_list
 
 
-
 def propogate_pieces(cap_row, filler_row, playable_rows):
 	print(cap_row)
 	print(filler_row)
@@ -176,6 +177,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 	else:
 		piece_selection = select_piece(player_pieces, opponent_pieces)
 	move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces)
+	king_me(move_selection, player_pieces)
 
 	jumped = False
 	if last_token_removed != token:
@@ -302,6 +304,12 @@ def can_move(x, y, player_pieces, opponent_pieces):
 		possible = True
 
 	return possible
+
+
+def king_me(move_selection, player_pieces):
+	if move_selection[1] == 0 or move_selection[1] == 7:
+		player_pieces.pop(str(move_selection))
+		player_pieces[str(move_selection)]='K'
 
 
 if __name__ == '__main__':
