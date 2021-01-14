@@ -1,6 +1,9 @@
 import sys, time
 
 # TODO check if tokens are grabbking K's
+# TODO Add piece grabbed counter
+# TODO Change round/turn formatting
+
 
 black_pieces = {}
 red_pieces = {}
@@ -176,10 +179,10 @@ def play():
 		turn = turn + 1
 		if turn % 2 != 0:
 			print('Round {0}, {1}\'s turn'.format(turn, black_name))
-			turn, jumped, move_selection = player_turn(black_pieces, red_pieces, turn, jumped, move_selection, 'O')
+			turn, jumped, move_selection = player_turn(black_pieces, red_pieces, turn, jumped, move_selection, black_initial)
 		else:
 			print('Round {0}, {1}\'s turn'.format(turn, red_name))
-			turn, jumped, move_selection = player_turn(red_pieces, black_pieces, turn, jumped, move_selection, 'X')
+			turn, jumped, move_selection = player_turn(red_pieces, black_pieces, turn, jumped, move_selection, red_initial)
 		if len(black_pieces) == 0:
 			print('X\'s win!')
 			break
