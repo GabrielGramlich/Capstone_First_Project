@@ -212,6 +212,10 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 		pieces_removed.clear()
 
 	if jumped_piece != None:
+		if opponent_token == black_initial:
+			black_count = black_count - 1
+		elif opponent_token == red_initial:
+			red_count = red_count - 1
 		opponent_pieces.pop(str([int(jumped_piece[0]),int(jumped_piece[1])]))
 		pieces_removed[str([int(jumped_piece[0]),int(jumped_piece[1])])] = jumped_piece_type
 		last_token_removed = opponent_token
