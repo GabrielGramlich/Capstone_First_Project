@@ -159,8 +159,10 @@ def select_piece(player_pieces):
 	invalid = True
 	print('\nPlease select which piece you would like to move.')
 	while invalid:
+		refresh_rate = 2
 		try:
 			y = int(input('Choose a number on the x axis: ')) - 1
+			refresh_rate = 3
 			x = int(input('Choose a number on the y axis: ')) - 1
 			if [x,y] in player_pieces:
 				invalid = False
@@ -169,7 +171,7 @@ def select_piece(player_pieces):
 				refresh(3)
 				print('Invalid selection. Please select a different piece.')
 		except ValueError:
-			refresh(3)
+			refresh(refresh_rate)
 			print('Input must be an integer. Please try again.')
 
 
@@ -179,8 +181,10 @@ def select_move(piece, player_pieces, opponent_pieces):
 	# TODO Validate this
 	print('\nPlease select where you would like to move the piece.')
 	while invalid:
+		refresh_rate = 2
 		try:
 			y = int(input('Choose a number on the x axis: ')) - 1
+			refresh_rate = 3
 			x = int(input('Choose a number on the y axis: ')) - 1
 			if empty(x,y,player_pieces,opponent_pieces) and one_space_away(x,y,piece):
 				invalid = False
@@ -192,7 +196,7 @@ def select_move(piece, player_pieces, opponent_pieces):
 				refresh(3)
 				print('Invalid selection. Please select a different square.')
 		except ValueError:
-			refresh(3)
+			refresh(refresh_rate)
 			print('Input must be an integer. Please try again.')
 
 
