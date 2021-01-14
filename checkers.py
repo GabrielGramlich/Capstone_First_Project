@@ -180,13 +180,13 @@ def play():
 		elif len(red_pieces) == 0:
 			print('O\'s win!')
 			break
-		if turn % 2 != 0:
-			stalemate = no_moves_left(red_pieces, black_pieces)
+		if turn % 2 == 0:
+			stalemate = no_moves_left(red_pieces, black_pieces,red_initial)
 			if stalemate:
 				print('No moves left. Stalemate!')
 				break
 		elif turn %2 != 0:
-			stalemate = no_moves_left(black_pieces, red_pieces)
+			stalemate = no_moves_left(black_pieces, red_pieces,black_initial)
 			if stalemate:
 				print('No no_moves_left. Stalemate!')
 				break
@@ -201,7 +201,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 		print('You must move this piece.')
 		piece_selection = moved_piece
 	else:
-		piece_selection = select_piece(player_pieces, opponent_pieces)
+		piece_selection = select_piece(player_pieces, opponent_pieces, token)
 	move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces, token)
 
 	jumped = False
@@ -212,7 +212,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 		opponent_pieces.pop(str([int(jumped_piece[0]),int(jumped_piece[1])]))
 		pieces_removed[str([int(jumped_piece[0]),int(jumped_piece[1])])] = jumped_piece_type
 		last_token_removed = token
-		if can_jump(move_selection, player_pieces, opponent_pieces):
+		if can_jump(move_selection, player_pieces, opponent_pieces, token):
 			turn = turn - 1
 			jumped = True
 	player_pieces.pop(str(piece_selection))
@@ -225,7 +225,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 	return turn, jumped, move_selection
 
 
-def select_piece(player_pieces,opponent_pieces):
+def select_piece(player_pieces,opponent_pieces,token):
 	invalid = True
 	print('\nPlease select which piece you would like to move.')
 	while invalid:
@@ -235,7 +235,7 @@ def select_piece(player_pieces,opponent_pieces):
 			refresh_rate = 3
 			x = int(input('Choose a number on the y (horizontal) axis: ')) - 1
 			selection = [x,y]
-			if (str(selection) in player_pieces and (can_move(selection,player_pieces,opponent_pieces)) or (str(selection) in player_pieces and can_jump(selection,player_pieces,opponent_pieces))):
+			if (str(selection) in player_pieces and (can_move(selection,player_pieces,opponent_pieces)) or (str(selection) in player_pieces and can_jump(selection,player_pieces,opponent_pieces,token))):
 				invalid = False
 				return [x,y]
 			else:
@@ -303,20 +303,24 @@ def jumping(jumped_piece,opponent_pieces):
 		return False
 
 
-def can_jump(selection, player_pieces, opponent_pieces):
+def can_jump(selection, player_pieces, opponent_pieces, token):
+	piece_type = player_pieces.get(str(selection))
+
 	possible = False
-	if str([selection[0] - 1, selection[1] - 1]) in opponent_pieces and str([selection[0] - 2, selection[1] - 2]) not in player_pieces and str([selection[0] - 2, selection[1] - 2]) not in opponent_pieces:
-		if selection[0]-2 >= 0 and selection[1]-2 >= 0:
-			possible = True
-	if str([selection[0] - 1, selection[1] + 1]) in opponent_pieces and str([selection[0] - 2, selection[1] + 2]) not in player_pieces and str([selection[0] - 2, selection[1] + 2]) not in opponent_pieces:
-		if selection[0]-2 >= 0 and selection[1]+2 <= (board_size - 1):
-			possible = True
-	if str([selection[0] + 1, selection[1] - 1]) in opponent_pieces and str([selection[0] + 2, selection[1] - 2]) not in player_pieces and str([selection[0] + 2, selection[1] - 2]) not in opponent_pieces:
-		if selection[0]+2 <= (board_size - 1) and selection[1]-2 >= 0:
-			possible = True
-	if str([selection[0] + 1, selection[1] + 1]) in opponent_pieces and str([selection[0] + 2, selection[1] + 2]) not in player_pieces and str([selection[0] + 2, selection[1] + 2]) not in opponent_pieces:
-		if selection[0]+2 <= (board_size - 1) and selection[1]+2 <= (board_size - 1):
-			possible = True
+	if piece_type == 'K' or token == red_initial:
+		if str([selection[0] - 1, selection[1] - 1]) in opponent_pieces and str([selection[0] - 2, selection[1] - 2]) not in player_pieces and str([selection[0] - 2, selection[1] - 2]) not in opponent_pieces:
+			if selection[0]-2 >= 0 and selection[1]-2 >= 0:
+				possible = True
+		if str([selection[0] - 1, selection[1] + 1]) in opponent_pieces and str([selection[0] - 2, selection[1] + 2]) not in player_pieces and str([selection[0] - 2, selection[1] + 2]) not in opponent_pieces:
+			if selection[0]-2 >= 0 and selection[1]+2 <= (board_size - 1):
+				possible = True
+	if piece_type == 'K' or token == black_initial:
+		if str([selection[0] + 1, selection[1] - 1]) in opponent_pieces and str([selection[0] + 2, selection[1] - 2]) not in player_pieces and str([selection[0] + 2, selection[1] - 2]) not in opponent_pieces:
+			if selection[0]+2 <= (board_size - 1) and selection[1]-2 >= 0:
+				possible = True
+		if str([selection[0] + 1, selection[1] + 1]) in opponent_pieces and str([selection[0] + 2, selection[1] + 2]) not in player_pieces and str([selection[0] + 2, selection[1] + 2]) not in opponent_pieces:
+			if selection[0]+2 <= (board_size - 1) and selection[1]+2 <= (board_size - 1):
+				possible = True
 
 	return possible
 
@@ -361,12 +365,12 @@ def king_me(move_selection, player_pieces):
 		player_pieces[str(move_selection)]='K'
 
 
-def no_moves_left(player_pieces, opponent_pieces):
+def no_moves_left(player_pieces, opponent_pieces, token):
 	no_moves = True
 
 	for piece in player_pieces:
 		piece_list = convert_to_list(piece)
-		if can_move(piece_list, player_pieces, opponent_pieces) or can_jump(piece_list, player_pieces, opponent_pieces):
+		if can_move(piece_list, player_pieces, opponent_pieces) or can_jump(piece_list, player_pieces, opponent_pieces, token):
 			no_moves = False
 			break
 
