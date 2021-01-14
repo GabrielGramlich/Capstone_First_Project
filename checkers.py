@@ -143,8 +143,9 @@ def player_turn(player_pieces, opponent_pieces, turn):
 	move_selection, jumped_piece = select_move(piece_selection, player_pieces, opponent_pieces)
 	if jumped_piece != None:
 		opponent_pieces.remove(jumped_piece)
-		# TODO Validate this
-		turn = turn - 1
+		if can_jump(move_selection, opponent_pieces):
+			# TODO Validate this
+			turn = turn - 1
 	player_pieces.remove(piece_selection)
 	player_pieces.append(move_selection)
 	player_pieces.sort()
@@ -178,7 +179,6 @@ def select_piece(player_pieces):
 
 def select_move(piece, player_pieces, opponent_pieces):
 	invalid = True
-	# TODO Validate this
 	print('\nPlease select where you would like to move the piece.')
 	while invalid:
 		refresh_rate = 2
@@ -227,6 +227,20 @@ def jumping(x,y,piece,opponent_pieces):
 		return True
 	else:
 		return False
+
+
+def can_jump(selection, opponent_pieces):
+	possible = False
+	if [selection[0] - 1, selection[1] - 1] in opponent_pieces:
+		possible = True
+	if [selection[0] - 1, selection[1] + 1] in opponent_pieces:
+		possible = True
+	if [selection[0] + 1, selection[1] - 1] in opponent_pieces:
+		possible = True
+	if [selection[0] + 1, selection[1] + 1] in opponent_pieces:
+		possible = True
+
+	return possible
 
 
 if __name__ == '__main__':
