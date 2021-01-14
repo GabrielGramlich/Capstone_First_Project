@@ -196,7 +196,7 @@ def play():
 
 
 def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, token, opponent_token):
-	global pieces_removed, last_token_removed
+	global pieces_removed, last_token_removed, black_count, red_count
 
 	if jumping:
 		print('\nLast piece moved:')
