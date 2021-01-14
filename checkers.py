@@ -98,11 +98,17 @@ def get_playable_rows():
 		for y in range(board_size):
 			if [x,y,'N'] in black_pieces:
 				row = row + ' X |'
+			elif [x,y,'K'] in black_pieces:
+				row = row + '<X>|'
 			elif [x,y,'N'] in red_pieces:
 				row = row + ' O |'
+			elif [x,y,'K'] in red_pieces:
+				row = row + '<O>|'
 			elif (x % 2 == 0 and y % 2 != 0) or (x % 2 != 0 and y % 2 == 0):
 				row = row + ' * |'
 			elif [x,y,'N'] in pieces_removed:
+				row = row + '[' + last_token_removed + ']|'
+			elif [x,y,'K'] in pieces_removed:
 				row = row + '{' + last_token_removed + '}|'
 			else:
 				row = row + '   |'
