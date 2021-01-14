@@ -149,7 +149,8 @@ def player_turn(player_pieces, opponent_pieces, turn):
 	player_pieces.remove(piece_selection)
 	player_pieces.append(move_selection)
 	player_pieces.sort()
-	refresh(36)
+	refresh_rate = 36 - ((12-board_size)*2)
+	refresh((36-((12-board_size)*2)))
 	display_board()
 
 	return turn
