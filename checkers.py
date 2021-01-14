@@ -3,6 +3,7 @@ import sys, time
 black_pieces = []
 red_pieces = []
 board_size = 0
+last_piece_removed = []
 
 def main():
 	setup_board()
@@ -93,7 +94,6 @@ def get_nonplayable_rows():
 
 
 def get_playable_rows():
-	# TODO Add piece removed
 	playable_rows = []
 	for x in range(board_size):
 		if x < 9:
@@ -107,6 +107,8 @@ def get_playable_rows():
 				row = row + ' O |'
 			elif (x % 2 == 0 and y % 2 != 0) or (x % 2 != 0 and y % 2 == 0):
 				row = row + ' * |'
+			elif [x,y] == last_piece_removed:
+				row = row + ' ^ |'
 			else:
 				row = row + '   |'
 		if x < 9:
@@ -148,6 +150,8 @@ def play():
 
 
 def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece):
+	global last_piece_removed
+
 	if jumped:
 		print('\nLast piece moved:')
 		print(str(moved_piece[1]) + ',' + str(moved_piece[0]))
@@ -159,8 +163,8 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece):
 	jumped = False
 	if jumped_piece != None:
 		opponent_pieces.remove(jumped_piece)
+		last_piece_removed = jumped_piece
 		if can_jump(move_selection, player_pieces, opponent_pieces):
-			# TODO Make them grab the same piece
 			turn = turn - 1
 			jumped = True
 	player_pieces.remove(piece_selection)
