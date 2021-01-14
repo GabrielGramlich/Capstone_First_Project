@@ -3,7 +3,7 @@ import sys, time
 black_pieces = []
 red_pieces = []
 board_size = 0
-last_piece_removed = []
+pieces_removed = []
 last_token_removed = ''
 
 def main():
@@ -95,8 +95,6 @@ def get_nonplayable_rows():
 
 
 def get_playable_rows():
-	global last_piece_removed
-
 	playable_rows = []
 	for x in range(board_size):
 		if x < 9:
@@ -110,9 +108,8 @@ def get_playable_rows():
 				row = row + ' O |'
 			elif (x % 2 == 0 and y % 2 != 0) or (x % 2 != 0 and y % 2 == 0):
 				row = row + ' * |'
-			elif [x,y] == last_piece_removed:
+			elif [x,y] in pieces_removed:
 				row = row + '{' + last_token_removed + '}|'
-				last_piece_removed = []
 			else:
 				row = row + '   |'
 		if x < 9:
@@ -154,7 +151,7 @@ def play():
 
 
 def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token):
-	global last_piece_removed, last_token_removed
+	global pieces_removed, last_token_removed
 
 	if jumped:
 		print('\nLast piece moved:')
@@ -167,7 +164,9 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 	jumped = False
 	if jumped_piece != None:
 		opponent_pieces.remove(jumped_piece)
-		last_piece_removed = jumped_piece
+		if last_token_removed != token:
+			pieces_removed.clear()
+		pieces_removed.append(jumped_piece)
 		last_token_removed = token
 		if can_jump(move_selection, player_pieces, opponent_pieces):
 			turn = turn - 1
