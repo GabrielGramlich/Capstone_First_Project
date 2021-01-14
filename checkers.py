@@ -158,7 +158,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 		print(str(moved_piece[1] + 1) + ',' + str(moved_piece[0] + 1))
 		piece_selection = moved_piece
 	else:
-		piece_selection = select_piece(player_pieces)
+		piece_selection = select_piece(player_pieces, opponent_pieces)
 	move_selection, jumped_piece = select_move(piece_selection, player_pieces, opponent_pieces)
 
 	jumped = False
@@ -182,7 +182,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 	return turn, jumped, move_selection
 
 
-def select_piece(player_pieces):
+def select_piece(player_pieces,opponent_pieces):
 	# TODO Validate that this piece can move
 	invalid = True
 	print('\nPlease select which piece you would like to move.')
@@ -192,7 +192,7 @@ def select_piece(player_pieces):
 			y = int(input('Choose a number on the x axis: ')) - 1
 			refresh_rate = 3
 			x = int(input('Choose a number on the y axis: ')) - 1
-			if [x,y,'N'] in player_pieces:
+			if [x,y,'N'] in player_pieces and can_move(x,y,player_pieces,opponent_pieces):
 				invalid = False
 				return [x,y,'N']
 			else:
@@ -267,6 +267,20 @@ def can_jump(selection, player_pieces, opponent_pieces):
 	if [selection[0] - 1, selection[1] + 1] in opponent_pieces and [selection[0] - 2, selection[1] + 2] not in player_pieces and [selection[0] - 2, selection[1] + 2] not in opponent_pieces:
 		possible = True
 	if [selection[0] + 1, selection[1] + 1] in opponent_pieces and [selection[0] + 2, selection[1] + 2] not in player_pieces and [selection[0] + 2, selection[1] + 2] not in opponent_pieces:
+		possible = True
+
+	return possible
+
+
+def can_move(x, y, player_pieces, opponent_pieces):
+	possible = False
+	if [x - 1, y - 1, 'N'] not in player_pieces and [x - 1, y - 1, 'N'] not in opponent_pieces:
+		possible = True
+	if [x + 1, y - 1, 'N'] not in player_pieces and [x + 1, y - 1, 'N'] not in opponent_pieces:
+		possible = True
+	if [x - 1, y + 1, 'N'] not in player_pieces and [x - 1, y + 1, 'N'] not in opponent_pieces:
+		possible = True
+	if [x + 1, y + 1, 'N'] not in player_pieces and [x + 1, y + 1, 'N'] not in opponent_pieces:
 		possible = True
 
 	return possible
