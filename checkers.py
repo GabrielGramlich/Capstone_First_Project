@@ -134,9 +134,6 @@ def play():
 		else:
 			print('Round {}, player X goes'.format(turn))
 			turn = player_turn(black_pieces, red_pieces, turn)
-		# TODO make move
-		# TODO continue if allowed
-		# TODO switch player
 
 
 def player_turn(player_pieces, opponent_pieces, turn):
@@ -171,15 +168,41 @@ def select_move(piece, player_pieces, opponent_pieces):
 		print('\nPlease select where you would like to move the piece.')
 		y = int(input('Choose a number on the x axis: ')) - 1
 		x = int(input('Choose a number on the y axis: ')) - 1
-		if [x,y] not in player_pieces and [x,y] not in opponent_pieces:
-			if (x - 1 == piece[0] or x + 1 == piece[0]) and (y - 1 == piece[1] or y + 1 == piece[1]):
+		if empty(x,y,player_pieces,opponent_pieces) and one_space_away(x,y,piece):
+			invalid = False
+			return [x,y], None
+		elif empty(x,y,player_pieces,opponent_pieces) and two_spaces_away(x,y,piece) and jumping(x,y,piece,opponent_pieces):
 				invalid = False
-				return [x,y], None
-			elif (x - 2 == piece[0] or x + 2 == piece[0]) and (y - 2 == piece[1] or y + 2 == piece[1]):
-				jumped_piece = [((x + piece[0]) / 2),((y + piece[1]) / 2)]
-				if jumped_piece in opponent_pieces:
-					invalid = False
-					return [x,y], jumped_piece
+				return [x,y], jumped_piece
+
+
+def empty(x,y,player_pieces,opponent_pieces):
+	if [x,y] not in player_pieces and [x,y] not in opponent_pieces:
+		return True
+	else:
+		return False
+
+
+def one_space_away():
+	if (x - 1 == piece[0] or x + 1 == piece[0]) and (y - 1 == piece[1] or y + 1 == piece[1]):
+		return True
+	else:
+		return False
+
+
+def two_spaces_away():
+	if (x - 2 == piece[0] or x + 2 == piece[0]) and (y - 2 == piece[1] or y + 2 == piece[1]):
+		return True
+	else:
+		return False
+
+
+def jumping():
+	jumped_piece = [((x + piece[0]) / 2),((y + piece[1]) / 2)]
+	if jumped_piece in opponent_pieces:
+		return True
+	else:
+		return False
 
 
 if __name__ == '__main__':
