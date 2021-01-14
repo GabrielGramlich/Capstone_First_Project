@@ -194,6 +194,8 @@ def select_piece(player_pieces):
 
 
 def select_move(piece, player_pieces, opponent_pieces):
+	# TODO Keep player from moving backwards if not kinged
+	# TODO King players at end of board
 	invalid = True
 	print('\nPlease select where you would like to move the piece.')
 	while invalid:
