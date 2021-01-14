@@ -1,3 +1,12 @@
+'''
+This program is a game of checkers. Players select a board size and then take turns moving until all pieces run out.
+
+The program uses dictionaries with lists as their keys. As Python lists are mutable and dictionary keys are hashed
+for quick searching, the lists should at no point be changed. They are stored as lists for the purpose of recognizing
+squares on the board owned by a player, but when a change in possession, placement or piece type occurs, the key is
+removed from the list and a new value is added. Changing this logic will break the code.
+'''
+
 import sys, time
 
 black_pieces = []
