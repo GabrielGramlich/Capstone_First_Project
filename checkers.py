@@ -8,13 +8,13 @@ last_token_removed = ''
 
 def main():
 	setup_board()
+	play()
 
 
 def setup_board():
 	get_board_size()
 	create_starting_pieces()
 	display_board()
-	play()
 
 
 def get_board_size():
@@ -22,17 +22,12 @@ def get_board_size():
 
 	print('What size board do you want to play with?')
 	print('Must be an even number between 6 and 12.')
-	board_size = valid_size()
-	refresh(3)
-
-
-def valid_size():
 	bad = True
 	while bad:
 		try:
-			size = int(input('Your selection: '))
-			if size % 2 == 0:
-				if size <= 12 and size >= 6:
+			board_size = int(input('Your selection: '))
+			if board_size % 2 == 0:
+				if board_size <= 12 and board_size >= 6:
 					bad = False
 				else:
 					refresh(2)
@@ -43,8 +38,7 @@ def valid_size():
 		except ValueError:
 			refresh(2)
 			print('Input must be an integer.')
-
-	return size
+	refresh(3)
 
 
 def refresh(lines):
