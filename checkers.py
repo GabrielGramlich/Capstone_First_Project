@@ -104,6 +104,8 @@ def get_playable_rows():
 				row = row + ' X |'
 			elif [x,y] in red_pieces:
 				row = row + ' O |'
+			elif (x % 2 == 0 and y % 2 != 0) or (x % 2 != 0 and y % 2 == 0):
+				row = row + ' * |'
 			else:
 				row = row + '   |'
 		if x < 9:
