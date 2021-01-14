@@ -1,8 +1,10 @@
 import sys, time
 
-# TODO check if tokens are grabbking K's
+# TODO Check if tokens are grabbking K's
 # TODO Add piece grabbed counter
 # TODO Change round/turn formatting
+# TODO Unselect a piece
+# TODO Add in stalemate condition
 
 
 black_pieces = {}
@@ -233,7 +235,7 @@ def select_piece(player_pieces,opponent_pieces, token):
 			y = int(input('Choose a number on the x (vertical) axis: ')) - 1
 			refresh_rate = 3
 			x = int(input('Choose a number on the y (horizontal) axis: ')) - 1
-			if str([x,y]) in player_pieces and (can_move(x,y,player_pieces,opponent_pieces, token) or can_jump([x,y],player_pieces,opponent_pieces, token)):
+			if (str([x,y]) in player_pieces and (can_move(x,y,player_pieces,opponent_pieces, token)) or (str([x,y]) in player_pieces and can_jump([x,y],player_pieces,opponent_pieces, token))):
 				invalid = False
 				return [x,y]
 			else:
@@ -246,8 +248,6 @@ def select_piece(player_pieces,opponent_pieces, token):
 
 
 def select_move(piece, player_pieces, opponent_pieces):
-	# TODO Keep player from moving backwards if not kinged
-	# TODO King players at end of board
 	invalid = True
 	print('\nPlease select where you would like to move the piece.')
 	while invalid:
