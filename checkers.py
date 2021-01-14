@@ -93,6 +93,7 @@ def get_nonplayable_rows():
 
 
 def get_playable_rows():
+	# TODO Add piece removed
 	playable_rows = []
 	for x in range(board_size):
 		if x < 9:
