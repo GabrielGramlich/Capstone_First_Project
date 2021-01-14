@@ -315,13 +315,6 @@ def can_jump(selection, player_pieces, opponent_pieces):
 
 
 def can_move(x, y, player_pieces, opponent_pieces):
-	print('What?!')
-	print(str([x-1,y-1]))
-	print(str([x+1,y-1]))
-	print(str([x-1,y+1]))
-	print(str([x+1,y+1]))
-	print(player_pieces)
-	time.sleep(10)
 	possible = False
 	if str([x - 1, y - 1]) not in player_pieces and str([x - 1, y - 1]) not in opponent_pieces:
 		if x-1 >= 0 and y-1 >= 0:
