@@ -4,6 +4,7 @@ black_pieces = []
 red_pieces = []
 board_size = 0
 last_piece_removed = []
+last_token_removed = ''
 
 def main():
 	setup_board()
@@ -94,6 +95,8 @@ def get_nonplayable_rows():
 
 
 def get_playable_rows():
+	global last_piece_removed
+
 	playable_rows = []
 	for x in range(board_size):
 		if x < 9:
@@ -108,7 +111,8 @@ def get_playable_rows():
 			elif (x % 2 == 0 and y % 2 != 0) or (x % 2 != 0 and y % 2 == 0):
 				row = row + ' * |'
 			elif [x,y] == last_piece_removed:
-				row = row + ' ^ |'
+				row = row + '{' + last_token_removed + '}|'
+				last_piece_removed = []
 			else:
 				row = row + '   |'
 		if x < 9:
@@ -137,10 +141,10 @@ def play():
 		turn = turn + 1
 		if turn % 2 != 0:
 			print('Round {}, player X goes'.format(turn))
-			turn, jumped, move_selection = player_turn(black_pieces, red_pieces, turn, jumped, move_selection)
+			turn, jumped, move_selection = player_turn(black_pieces, red_pieces, turn, jumped, move_selection, 'O')
 		else:
 			print('Round {}, player O goes'.format(turn))
-			turn, jumped, move_selection = player_turn(red_pieces, black_pieces, turn, jumped, move_selection)
+			turn, jumped, move_selection = player_turn(red_pieces, black_pieces, turn, jumped, move_selection, 'X')
 		if len(black_pieces) == 0:
 			print('X\'s win!')
 			break
@@ -149,8 +153,8 @@ def play():
 			break
 
 
-def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece):
-	global last_piece_removed
+def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token):
+	global last_piece_removed, last_token_removed
 
 	if jumped:
 		print('\nLast piece moved:')
@@ -164,6 +168,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece):
 	if jumped_piece != None:
 		opponent_pieces.remove(jumped_piece)
 		last_piece_removed = jumped_piece
+		last_token_removed = token
 		if can_jump(move_selection, player_pieces, opponent_pieces):
 			turn = turn - 1
 			jumped = True
