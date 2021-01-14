@@ -1,7 +1,6 @@
 import sys, time
 
 # TODO Check if tokens are grabbking K's
-# TODO Change round/turn formatting
 # TODO Unselect a piece
 
 
