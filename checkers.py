@@ -138,6 +138,12 @@ def play():
 		else:
 			print('Round {}, player O goes'.format(turn))
 			turn, jumped, move_selection = player_turn(red_pieces, black_pieces, turn, jumped, move_selection)
+		if len(black_pieces) == 0:
+			print('X\'s win!')
+			break
+		elif len(red_pieces) == 0:
+			print('O\'s win!')
+			break
 
 
 def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece):
