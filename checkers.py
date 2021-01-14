@@ -34,13 +34,11 @@ def get_players_initials():
 		black_initial = black_name[0:1]
 		red_initial = red_name[0:1]
 		if black_initial != red_initial:
+			refresh(3)
 			break
 		else:
 			refresh(3)
 			print('First initials can\'t match.')
-
-
-	refresh(2)
 
 
 def get_board_size():
