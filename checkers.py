@@ -193,21 +193,21 @@ def empty(x,y,player_pieces,opponent_pieces):
 		return False
 
 
-def one_space_away():
+def one_space_away(x,y,piece):
 	if (x - 1 == piece[0] or x + 1 == piece[0]) and (y - 1 == piece[1] or y + 1 == piece[1]):
 		return True
 	else:
 		return False
 
 
-def two_spaces_away():
+def two_spaces_away(x,y,piece):
 	if (x - 2 == piece[0] or x + 2 == piece[0]) and (y - 2 == piece[1] or y + 2 == piece[1]):
 		return True
 	else:
 		return False
 
 
-def jumping():
+def jumping(x,y,piece,opponent_pieces):
 	jumped_piece = [((x + piece[0]) / 2),((y + piece[1]) / 2)]
 	if jumped_piece in opponent_pieces:
 		return True
