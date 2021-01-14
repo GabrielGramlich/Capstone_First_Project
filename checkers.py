@@ -6,6 +6,8 @@ black_pieces = {}
 red_pieces = {}
 black_initial = ''
 red_initial = ''
+black_name = ''
+red_name = ''
 board_size = 0
 pieces_removed = {}
 last_token_removed = ''
@@ -23,10 +25,21 @@ def setup_board():
 
 
 def get_players_initials():
-	global black_initial, red_initial
+	global black_name, red_name, black_initial, red_initial
 	print('\n\n')
-	black_initial = input('What is player 1\'s first initial? ').upper()
-	red_initial = input('What is player 2\'s first initial? ').upper()
+	print('Let\'s get your names.')
+	while True:
+		black_name = input('What\'s player 1\'s name? ').title()
+		red_name = input('What\'s player 2\'s name? ').title()
+		black_initial = black_name[0:1]
+		red_initial = red_name[0:1]
+		if black_initial != red_initial:
+			break
+		else:
+			refresh(3)
+			print('First initials can\'t match.')
+
+
 	refresh(2)
 
 
@@ -164,10 +177,10 @@ def play():
 	while True:
 		turn = turn + 1
 		if turn % 2 != 0:
-			print('Round {0}, player {1} goes'.format(turn, black_initial))
+			print('Round {0}, player {1} goes'.format(turn, black_name))
 			turn, jumped, move_selection = player_turn(black_pieces, red_pieces, turn, jumped, move_selection, 'O')
 		else:
-			print('Round {0}, player {1} goes'.format(turn, red_initial))
+			print('Round {0}, player {1} goes'.format(turn, red_name))
 			turn, jumped, move_selection = player_turn(red_pieces, black_pieces, turn, jumped, move_selection, 'X')
 		if len(black_pieces) == 0:
 			print('X\'s win!')
