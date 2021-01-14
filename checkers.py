@@ -23,6 +23,7 @@ def setup_board():
 
 
 def get_players_initials():
+	global black_intial, red_intial
 	print('\n\n')
 	black_intial = input('What is player 1\'s first initial? ').upper()
 	red_intial = input('What is player 2\'s first initial? ').upper()
