@@ -170,10 +170,10 @@ def play():
 		turn = turn + 1
 		if turn % 2 != 0:
 			print('Round {0}, {1}\'s turn'.format(turn, black_name))
-			turn, jumped, move_selection = player_turn(black_pieces, red_pieces, turn, jumped, move_selection, black_initial)
+			turn, jumped, move_selection = player_turn(black_pieces, red_pieces, turn, jumped, move_selection, black_initial, red_initial)
 		else:
 			print('Round {0}, {1}\'s turn'.format(turn, red_name))
-			turn, jumped, move_selection = player_turn(red_pieces, black_pieces, turn, jumped, move_selection, red_initial)
+			turn, jumped, move_selection = player_turn(red_pieces, black_pieces, turn, jumped, move_selection, red_initial, black_initial)
 		if len(black_pieces) == 0:
 			print('X\'s win!')
 			break
@@ -192,7 +192,7 @@ def play():
 				break
 
 
-def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token):
+def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token, opponent_token):
 	global pieces_removed, last_token_removed
 
 	if jumped:
@@ -205,13 +205,13 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 	move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces, token)
 
 	jumped = False
-	if last_token_removed != token:
+	if last_token_removed != opponent_token:
 		pieces_removed.clear()
 
 	if jumped_piece != None:
 		opponent_pieces.pop(str([int(jumped_piece[0]),int(jumped_piece[1])]))
 		pieces_removed[str([int(jumped_piece[0]),int(jumped_piece[1])])] = jumped_piece_type
-		last_token_removed = token
+		last_token_removed = opponent_token
 		if can_jump(move_selection, player_pieces, opponent_pieces, token):
 			turn = turn - 1
 			jumped = True
