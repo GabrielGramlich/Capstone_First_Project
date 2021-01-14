@@ -175,10 +175,10 @@ def play():
 	while True:
 		turn = turn + 1
 		if turn % 2 != 0:
-			print('Round {0}, player {1} goes'.format(turn, black_name))
+			print('Round {0}, {1}\'s turn'.format(turn, black_name))
 			turn, jumped, move_selection = player_turn(black_pieces, red_pieces, turn, jumped, move_selection, 'O')
 		else:
-			print('Round {0}, player {1} goes'.format(turn, red_name))
+			print('Round {0}, {1}\'s turn'.format(turn, red_name))
 			turn, jumped, move_selection = player_turn(red_pieces, black_pieces, turn, jumped, move_selection, 'X')
 		if len(black_pieces) == 0:
 			print('X\'s win!')
@@ -227,9 +227,9 @@ def select_piece(player_pieces,opponent_pieces):
 	while invalid:
 		refresh_rate = 2
 		try:
-			y = int(input('Choose a number on the x axis: ')) - 1
+			y = int(input('Choose a number on the x (vertical) axis: ')) - 1
 			refresh_rate = 3
-			x = int(input('Choose a number on the y axis: ')) - 1
+			x = int(input('Choose a number on the y (horizontal) axis: ')) - 1
 			if str([x,y]) in player_pieces and (can_move(x,y,player_pieces,opponent_pieces) or can_jump([x,y],player_pieces,opponent_pieces)):
 				invalid = False
 				return [x,y]
@@ -250,9 +250,9 @@ def select_move(piece, player_pieces, opponent_pieces):
 	while invalid:
 		refresh_rate = 2
 		try:
-			y = int(input('Choose a number on the x axis: ')) - 1
+			y = int(input('Choose a number on the x (vertical) axis: ')) - 1
 			refresh_rate = 3
-			x = int(input('Choose a number on the y axis: ')) - 1
+			x = int(input('Choose a number on the y (horizontal) axis: ')) - 1
 			jumped_piece = [((x + piece[0]) / 2),((y + piece[1]) / 2)]
 			if empty(x,y,player_pieces,opponent_pieces) and one_space_away(x,y,piece):
 				invalid = False
@@ -315,15 +315,26 @@ def can_jump(selection, player_pieces, opponent_pieces):
 
 
 def can_move(x, y, player_pieces, opponent_pieces):
+	print('What?!')
+	print(str([x-1,y-1]))
+	print(str([x+1,y-1]))
+	print(str([x-1,y+1]))
+	print(str([x+1,y+1]))
+	print(player_pieces)
+	time.sleep(10)
 	possible = False
 	if str([x - 1, y - 1]) not in player_pieces and str([x - 1, y - 1]) not in opponent_pieces:
-		possible = True
+		if x-1 >= 0 and y-1 >= 0:
+			possible = True
 	if str([x + 1, y - 1]) not in player_pieces and str([x + 1, y - 1]) not in opponent_pieces:
-		possible = True
+		if x+1 <= (board_size - 1) and y-1 >= 0:
+			possible = True
 	if str([x - 1, y + 1]) not in player_pieces and str([x - 1, y + 1]) not in opponent_pieces:
-		possible = True
+		if x-1 >= 0 and y+1 <= (board_size - 1):
+			possible = True
 	if str([x + 1, y + 1]) not in player_pieces and str([x + 1, y + 1]) not in opponent_pieces:
-		possible = True
+		if x+1 <= (board_size - 1) and y+1 <= (board_size - 1):
+			possible = True
 
 	return possible
 
