@@ -4,7 +4,7 @@ import sys, time
 
 black_pieces = {}
 red_pieces = {}
-black_intial = ''
+black_initial = ''
 red_initial = ''
 board_size = 0
 pieces_removed = {}
@@ -23,10 +23,10 @@ def setup_board():
 
 
 def get_players_initials():
-	global black_intial, red_intial
+	global black_initial, red_initial
 	print('\n\n')
-	black_intial = input('What is player 1\'s first initial? ').upper()
-	red_intial = input('What is player 2\'s first initial? ').upper()
+	black_initial = input('What is player 1\'s first initial? ').upper()
+	red_initial = input('What is player 2\'s first initial? ').upper()
 	refresh(2)
 
 
@@ -111,14 +111,14 @@ def get_playable_rows():
 		for y in range(board_size):
 			if str([x,y]) in black_pieces:
 				if black_pieces.get(str([x,y])) == 'N':
-					row = row + ' ' + black_intial + ' |'
+					row = row + ' ' + black_initial + ' |'
 				elif black_pieces.get(str([x,y])) == 'K':
-					row = row + '<' + black_intial + '>|'
+					row = row + '<' + black_initial + '>|'
 			elif str([x,y]) in red_pieces:
 				if red_pieces.get(str([x,y])) == 'N':
-					row = row + ' ' + red_intial + ' |'
+					row = row + ' ' + red_initial + ' |'
 				elif red_pieces.get(str([x,y])) == 'K':
-					row = row + '<' + red_intial + '>|'
+					row = row + '<' + red_initial + '>|'
 			elif (x % 2 == 0 and y % 2 != 0) or (x % 2 != 0 and y % 2 == 0):
 				row = row + ' * |'
 			elif str([x,y]) in pieces_removed:
@@ -164,10 +164,10 @@ def play():
 	while True:
 		turn = turn + 1
 		if turn % 2 != 0:
-			print('Round {}, player X goes'.format(turn))
+			print('Round {0}, player {1} goes'.format(turn, black_initial))
 			turn, jumped, move_selection = player_turn(black_pieces, red_pieces, turn, jumped, move_selection, 'O')
 		else:
-			print('Round {}, player O goes'.format(turn))
+			print('Round {0}, player {1} goes'.format(turn, red_initial))
 			turn, jumped, move_selection = player_turn(red_pieces, black_pieces, turn, jumped, move_selection, 'X')
 		if len(black_pieces) == 0:
 			print('X\'s win!')
