@@ -186,10 +186,11 @@ def select_move(piece, player_pieces, opponent_pieces):
 			y = int(input('Choose a number on the x axis: ')) - 1
 			refresh_rate = 3
 			x = int(input('Choose a number on the y axis: ')) - 1
+			jumped_piece = [((x + piece[0]) / 2),((y + piece[1]) / 2)]
 			if empty(x,y,player_pieces,opponent_pieces) and one_space_away(x,y,piece):
 				invalid = False
 				return [x,y], None
-			elif empty(x,y,player_pieces,opponent_pieces) and two_spaces_away(x,y,piece) and jumping(x,y,piece,opponent_pieces):
+			elif empty(x,y,player_pieces,opponent_pieces) and two_spaces_away(x,y,piece) and jumping(jumped_piece,opponent_pieces):
 					invalid = False
 					return [x,y], jumped_piece
 			else:
@@ -221,8 +222,7 @@ def two_spaces_away(x,y,piece):
 		return False
 
 
-def jumping(x,y,piece,opponent_pieces):
-	jumped_piece = [((x + piece[0]) / 2),((y + piece[1]) / 2)]
+def jumping(jumped_piece,opponent_pieces):
 	if jumped_piece in opponent_pieces:
 		return True
 	else:
