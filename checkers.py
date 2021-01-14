@@ -203,7 +203,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 		piece_selection = moved_piece
 	else:
 		piece_selection = select_piece(player_pieces, opponent_pieces)
-	move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces)
+	move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces, token)
 
 	jumped = False
 	if last_token_removed != token:
@@ -247,7 +247,7 @@ def select_piece(player_pieces,opponent_pieces):
 
 
 
-def select_move(piece, player_pieces, opponent_pieces):
+def select_move(piece, player_pieces, opponent_pieces, token):
 	invalid = True
 	print('\nPlease select where you would like to move the piece.')
 	while invalid:
@@ -257,10 +257,10 @@ def select_move(piece, player_pieces, opponent_pieces):
 			refresh_rate = 3
 			x = int(input('Choose a number on the y (horizontal) axis: ')) - 1
 			jumped_piece = [((x + piece[0]) / 2),((y + piece[1]) / 2)]
-			if empty(x,y,player_pieces,opponent_pieces) and one_space_away(x,y,piece):
+			if empty(x,y,player_pieces,opponent_pieces) and one_space_away(x,y,piece) and is_moving_forward(piece, [x,y], player_pieces, token):
 				invalid = False
 				return [x,y], 'N', None, None
-			elif empty(x,y,player_pieces,opponent_pieces) and two_spaces_away(x,y,piece) and jumping(jumped_piece,opponent_pieces):
+			elif empty(x,y,player_pieces,opponent_pieces) and two_spaces_away(x,y,piece) and jumping(jumped_piece,opponent_pieces) and is_moving_forward(piece, [x,y], player_pieces, token):
 					jumped_piece_type = opponent_pieces.get(str([int(jumped_piece[0]),int(jumped_piece[1])]))
 					invalid = False
 					return [x,y], 'N', jumped_piece, jumped_piece_type
@@ -321,22 +321,17 @@ def can_jump(selection, player_pieces, opponent_pieces):
 	return possible
 
 
-def is_jumping_forward(selection, player_pieces, opponent_pieces, token):
-	piece_type = player_pieces.get(str(selection))
-	print(piece_type)
-	print(token)
-	time.sleep(10)
+def is_moving_forward(old_position, new_position, player_pieces, token):
+	piece_type = player_pieces.get(str(old_position))
 
 	possible = False
-	if piece_type == 'K' or (piece_type == 'N' and token != black_initial):
-		if selection[0]-2 >= 0 and selection[1]-2 >= 0:
+	if piece_type == 'K':
+		possible = True
+	elif piece_type == 'N' and token == black_initial:
+		if old_position[0] < new_position[0]:
 			possible = True
-		if selection[0]-2 >= 0 and selection[1]+2 <= (board_size - 1):
-			possible = True
-	if piece_type == 'K' or (piece_type == 'N' and token != red_initial):
-		if selection[0]+2 <= (board_size - 1) and selection[1]-2 >= 0:
-			possible = True
-		if selection[0]+2 <= (board_size - 1) and selection[1]+2 <= (board_size - 1):
+	elif piece_type == 'N' and token == red_initial:
+		if old_position[0] > new_position[0]:
 			possible = True
 
 	return possible
@@ -358,28 +353,6 @@ def can_move(x, y, player_pieces, opponent_pieces):
 	if str([x + 1, y + 1]) not in player_pieces and str([x + 1, y + 1]) not in opponent_pieces:
 		if x+1 <= (board_size - 1) and y+1 <= (board_size - 1):
 			possible = True
-
-	return possible
-
-
-def is_moving_forward(x, y, player_pieces, opponent_pieces, token):
-	piece_type = player_pieces.get(str([x,y]))
-
-	possible = False
-	if piece_type == 'K' or (piece_type == 'N' and token != black_initial):
-		if str([x - 1, y - 1]) not in player_pieces and str([x - 1, y - 1]) not in opponent_pieces:
-			if x-1 >= 0 and y-1 >= 0:
-				possible = True
-		if str([x - 1, y + 1]) not in player_pieces and str([x - 1, y + 1]) not in opponent_pieces:
-			if x-1 >= 0 and y+1 <= (board_size - 1):
-				possible = True
-	if piece_type == 'K' or (piece_type == 'N' and token != red_initial):
-		if str([x + 1, y - 1]) not in player_pieces and str([x + 1, y - 1]) not in opponent_pieces:
-			if x+1 <= (board_size - 1) and y-1 >= 0:
-				possible = True
-		if str([x + 1, y + 1]) not in player_pieces and str([x + 1, y + 1]) not in opponent_pieces:
-			if x+1 <= (board_size - 1) and y+1 <= (board_size - 1):
-				possible = True
 
 	return possible
 
