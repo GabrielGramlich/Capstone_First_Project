@@ -185,10 +185,10 @@ def play():
 	while True:
 		turn = turn + 1
 		if turn % 2 != 0:
-			print('Round {0}, {1}\'s turn'.format(turn, black_name))
+			print('Round {0}: {1}'.format(turn, black_name))
 			turn, jumping, move_selection = player_turn(black_pieces, red_pieces, turn, jumping, move_selection, black_initial, red_initial)
 		else:
-			print('Round {0}, {1}\'s turn'.format(turn, red_name))
+			print('Round {0}: {1}'.format(turn, red_name))
 			turn, jumping, move_selection = player_turn(red_pieces, black_pieces, turn, jumping, move_selection, red_initial, black_initial)
 		if len(black_pieces) == 0:
 			print('X\'s win!')
