@@ -4,6 +4,8 @@ import sys, time
 
 black_pieces = {}
 red_pieces = {}
+black_intial = ''
+red_initial = ''
 board_size = 0
 pieces_removed = {}
 last_token_removed = ''
@@ -14,9 +16,17 @@ def main():
 
 
 def setup_board():
+	get_players_initials()
 	get_board_size()
 	create_starting_pieces()
 	display_board()
+
+
+def get_players_initials():
+	print('\n\n')
+	black_intial = input('What is player 1\'s first initial? ').upper()
+	red_intial = input('What is player 2\'s first initial? ').upper()
+	refresh(2)
 
 
 def get_board_size():
@@ -100,14 +110,14 @@ def get_playable_rows():
 		for y in range(board_size):
 			if str([x,y]) in black_pieces:
 				if black_pieces.get(str([x,y])) == 'N':
-					row = row + ' X |'
+					row = row + ' ' + black_intial + ' |'
 				elif black_pieces.get(str([x,y])) == 'K':
-					row = row + '<X>|'
+					row = row + '<' + black_intial + '>|'
 			elif str([x,y]) in red_pieces:
 				if red_pieces.get(str([x,y])) == 'N':
-					row = row + ' O |'
+					row = row + ' ' + red_intial + ' |'
 				elif red_pieces.get(str([x,y])) == 'K':
-					row = row + '<O>|'
+					row = row + '<' + red_intial + '>|'
 			elif (x % 2 == 0 and y % 2 != 0) or (x % 2 != 0 and y % 2 == 0):
 				row = row + ' * |'
 			elif str([x,y]) in pieces_removed:
