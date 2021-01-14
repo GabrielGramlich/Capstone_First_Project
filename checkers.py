@@ -155,8 +155,8 @@ def player_turn(player_pieces, opponent_pieces, turn):
 
 def select_piece(player_pieces):
 	invalid = True
+	print('\nPlease select which piece you would like to move.')
 	while invalid:
-		print('\nPlease select which piece you would like to move.')
 		y = int(input('Choose a number on the x axis: ')) - 1
 		x = int(input('Choose a number on the y axis: ')) - 1
 		if [x,y] in player_pieces:
