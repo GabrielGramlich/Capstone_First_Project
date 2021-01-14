@@ -82,6 +82,8 @@ def refresh(lines):
 
 
 def create_starting_pieces():
+	global black_count, red_count
+
 	for x in range(board_size):
 		for y in range(board_size):
 			if x < ((board_size - 2) / 2):	# If on black's side of the board
