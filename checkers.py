@@ -156,6 +156,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 	if jumped:
 		print('\nLast piece moved:')
 		print(str(moved_piece[1] + 1) + ',' + str(moved_piece[0] + 1))
+		print('You must move this piece.')
 		piece_selection = moved_piece
 	else:
 		piece_selection = select_piece(player_pieces, opponent_pieces)
