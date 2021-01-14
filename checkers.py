@@ -4,7 +4,7 @@ import sys, time
 # TODO Add piece grabbed counter
 # TODO Change round/turn formatting
 # TODO Unselect a piece
-# TODO Add in stalemate condition
+# TODO Fix double move not leaving
 
 
 black_pieces = {}
@@ -153,17 +153,6 @@ def get_playable_rows():
 	return playable_rows
 
 
-def convert_to_list(string):
-	back_to_list = list(string)
-
-	checklist = ['[',']',',',' ']
-	for character in checklist:
-		while character in back_to_list:
-			back_to_list.remove(character)
-
-	return back_to_list
-
-
 def propogate_pieces(cap_row, filler_row, playable_rows):
 	print(cap_row)
 	print(filler_row)
@@ -191,6 +180,16 @@ def play():
 		elif len(red_pieces) == 0:
 			print('O\'s win!')
 			break
+		if turn % 2 != 0:
+			stalemate = no_moves_left(red_pieces, black_pieces)
+			if stalemate:
+				print('No moves left. Stalemate!')
+				break
+		elif turn %2 != 0:
+			stalemate = no_moves_left(black_pieces, red_pieces)
+			if stalemate:
+				print('No no_moves_left. Stalemate!')
+				break
 
 
 def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token):
@@ -235,7 +234,8 @@ def select_piece(player_pieces,opponent_pieces):
 			y = int(input('Choose a number on the x (vertical) axis: ')) - 1
 			refresh_rate = 3
 			x = int(input('Choose a number on the y (horizontal) axis: ')) - 1
-			if (str([x,y]) in player_pieces and (can_move(x,y,player_pieces,opponent_pieces)) or (str([x,y]) in player_pieces and can_jump([x,y],player_pieces,opponent_pieces))):
+			selection = [x,y]
+			if (str(selection) in player_pieces and (can_move(selection,player_pieces,opponent_pieces)) or (str(selection) in player_pieces and can_jump(selection,player_pieces,opponent_pieces))):
 				invalid = False
 				return [x,y]
 			else:
@@ -337,21 +337,19 @@ def is_moving_forward(old_position, new_position, player_pieces, token):
 	return possible
 
 
-def can_move(x, y, player_pieces, opponent_pieces):
-	piece_type = player_pieces.get(str([x,y]))
-
+def can_move(selection, player_pieces, opponent_pieces):
 	possible = False
-	if str([x - 1, y - 1]) not in player_pieces and str([x - 1, y - 1]) not in opponent_pieces:
-		if x-1 >= 0 and y-1 >= 0:
+	if str([selection[0] - 1, selection[1] - 1]) not in player_pieces and str([selection[0] - 1, selection[1] - 1]) not in opponent_pieces:
+		if selection[0]-1 >= 0 and selection[1]-1 >= 0:
 			possible = True
-	if str([x - 1, y + 1]) not in player_pieces and str([x - 1, y + 1]) not in opponent_pieces:
-		if x-1 >= 0 and y+1 <= (board_size - 1):
+	if str([selection[0] - 1, selection[1] + 1]) not in player_pieces and str([selection[0] - 1, selection[1] + 1]) not in opponent_pieces:
+		if selection[0]-1 >= 0 and selection[1]+1 <= (board_size - 1):
 			possible = True
-	if str([x + 1, y - 1]) not in player_pieces and str([x + 1, y - 1]) not in opponent_pieces:
-		if x+1 <= (board_size - 1) and y-1 >= 0:
+	if str([selection[0] + 1, selection[1] - 1]) not in player_pieces and str([selection[0] + 1, selection[1] - 1]) not in opponent_pieces:
+		if selection[0]+1 <= (board_size - 1) and selection[1]-1 >= 0:
 			possible = True
-	if str([x + 1, y + 1]) not in player_pieces and str([x + 1, y + 1]) not in opponent_pieces:
-		if x+1 <= (board_size - 1) and y+1 <= (board_size - 1):
+	if str([selection[0] + 1, selection[1] + 1]) not in player_pieces and str([selection[0] + 1, selection[1] + 1]) not in opponent_pieces:
+		if selection[0]+1 <= (board_size - 1) and selection[1]+1 <= (board_size - 1):
 			possible = True
 
 	return possible
@@ -361,6 +359,33 @@ def king_me(move_selection, player_pieces):
 	if move_selection[0] == 0 or move_selection[0] == board_size - 1:
 		player_pieces.pop(str(move_selection))
 		player_pieces[str(move_selection)]='K'
+
+
+def no_moves_left(player_pieces, opponent_pieces):
+	no_moves = True
+
+	for piece in player_pieces:
+		piece_list = convert_to_list(piece)
+		if can_move(piece_list, player_pieces, opponent_pieces) or can_jump(piece_list, player_pieces, opponent_pieces):
+			no_moves = False
+			break
+
+	return no_moves
+
+
+def convert_to_list(string):
+	back_to_list = list(string)
+	new_list = []
+
+	checklist = ['[',']',',',' ']
+	for character in checklist:
+		while character in back_to_list:
+			back_to_list.remove(character)
+
+	for number in back_to_list:
+		new_list.append(int(number))
+
+	return new_list
 
 
 if __name__ == '__main__':
