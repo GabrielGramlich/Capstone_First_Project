@@ -330,9 +330,6 @@ def can_jump(selection, player_pieces, opponent_pieces, token):
 
 def can_move(x, y, player_pieces, opponent_pieces, token):
 	piece_type = player_pieces.get(str([x,y]))
-	print(piece_type)
-	print(token)
-	time.sleep(10)
 
 	possible = False
 	if piece_type == 'K' or (piece_type == 'N' and token != black_initial):
