@@ -177,7 +177,6 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 	else:
 		piece_selection = select_piece(player_pieces, opponent_pieces)
 	move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces)
-	king_me(move_selection, player_pieces)
 
 	jumped = False
 	if last_token_removed != token:
@@ -192,6 +191,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 			jumped = True
 	player_pieces.pop(str(piece_selection))
 	player_pieces[str(move_selection)] = piece_type
+	king_me(move_selection, player_pieces)
 	refresh_rate = 36 - ((12-board_size)*2)
 	refresh((36-((12-board_size)*2)))
 	display_board()
@@ -307,7 +307,7 @@ def can_move(x, y, player_pieces, opponent_pieces):
 
 
 def king_me(move_selection, player_pieces):
-	if move_selection[1] == 0 or move_selection[1] == 7:
+	if move_selection[0] == 0 or move_selection[0] == board_size - 1:
 		player_pieces.pop(str(move_selection))
 		player_pieces[str(move_selection)]='K'
 
