@@ -105,17 +105,10 @@ def create_starting_pieces():
 
 
 def display_board():
-	info_row, black_row, red_row = get_display_rows()
 	cap_row, filler_row = get_nonplayable_rows()
 	playable_rows = get_playable_rows()
-	propogate_pieces(info_row, black_row, red_row, cap_row, filler_row, playable_rows)
-
-
-def get_display_rows():
-	info_row = 'Pieces remaining:'
-	black_row = '{0}:\t{1}'.format(black_name, black_count)
-	red_row = '{0}:\t{1}'.format(red_name, red_count)
-	return info_row, black_row, red_row
+	info_row, black_row, red_row = get_display_rows()
+	propogate_pieces(cap_row, filler_row, playable_rows, info_row, black_row, red_row)
 
 
 def get_nonplayable_rows():
@@ -166,16 +159,24 @@ def get_playable_rows():
 	return playable_rows
 
 
-def propogate_pieces(info_row, black_row, red_row, cap_row, filler_row, playable_rows):
-	print(info_row)
-	print(black_row)
-	print(red_row)
+def get_display_rows():
+	info_row = 'Pieces remaining:'
+	black_row = '{0}:\t{1}'.format(black_name, black_count)
+	red_row = '{0}:\t{1}'.format(red_name, red_count)
+	return info_row, black_row, red_row
+
+
+def propogate_pieces(cap_row, filler_row, playable_rows, info_row, black_row, red_row):
 	print(cap_row)
 	print(filler_row)
 	for i in range(len(playable_rows)):
 		print(playable_rows[i])
 		print(filler_row)
 	print(cap_row)
+	print()
+	print(info_row)
+	print(black_row)
+	print(red_row)
 
 
 def play():
@@ -238,7 +239,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 	player_pieces.pop(str(piece_selection))
 	player_pieces[str(move_selection)] = piece_type
 	king_me(move_selection, player_pieces)
-	refresh_rate = 39 - ((12-board_size)*2)
+	refresh_rate = 40 - ((12-board_size)*2)
 	refresh(refresh_rate)
 	display_board()
 
