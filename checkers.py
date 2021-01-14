@@ -159,14 +159,18 @@ def select_piece(player_pieces):
 	invalid = True
 	print('\nPlease select which piece you would like to move.')
 	while invalid:
-		y = int(input('Choose a number on the x axis: ')) - 1
-		x = int(input('Choose a number on the y axis: ')) - 1
-		if [x,y] in player_pieces:
-			invalid = False
-			return [x,y]
-		else:
+		try:
+			y = int(input('Choose a number on the x axis: ')) - 1
+			x = int(input('Choose a number on the y axis: ')) - 1
+			if [x,y] in player_pieces:
+				invalid = False
+				return [x,y]
+			else:
+				refresh(3)
+				print('Invalid selection. Please select a different piece.')
+		except ValueError:
 			refresh(3)
-			print('Invalid selection. Please select a different piece.')
+			print('Input must be an integer. Please try again.')
 
 
 
@@ -175,17 +179,21 @@ def select_move(piece, player_pieces, opponent_pieces):
 	# TODO Validate this
 	print('\nPlease select where you would like to move the piece.')
 	while invalid:
-		y = int(input('Choose a number on the x axis: ')) - 1
-		x = int(input('Choose a number on the y axis: ')) - 1
-		if empty(x,y,player_pieces,opponent_pieces) and one_space_away(x,y,piece):
-			invalid = False
-			return [x,y], None
-		elif empty(x,y,player_pieces,opponent_pieces) and two_spaces_away(x,y,piece) and jumping(x,y,piece,opponent_pieces):
+		try:
+			y = int(input('Choose a number on the x axis: ')) - 1
+			x = int(input('Choose a number on the y axis: ')) - 1
+			if empty(x,y,player_pieces,opponent_pieces) and one_space_away(x,y,piece):
 				invalid = False
-				return [x,y], jumped_piece
-		else:
+				return [x,y], None
+			elif empty(x,y,player_pieces,opponent_pieces) and two_spaces_away(x,y,piece) and jumping(x,y,piece,opponent_pieces):
+					invalid = False
+					return [x,y], jumped_piece
+			else:
+				refresh(3)
+				print('Invalid selection. Please select a different square.')
+		except ValueError:
 			refresh(3)
-			print('Invalid selection. Please select a different square.')
+			print('Input must be an integer. Please try again.')
 
 
 def empty(x,y,player_pieces,opponent_pieces):
