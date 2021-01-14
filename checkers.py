@@ -15,6 +15,8 @@ red_name = ''
 board_size = 0
 pieces_removed = {}
 last_token_removed = ''
+black_count = 0
+red_count = 0
 
 def main():
 	setup_board()
@@ -96,6 +98,8 @@ def create_starting_pieces():
 				else:
 					if y % 2 == 0:
 						red_pieces[str([x,y])] = 'N'
+	black_count = len(black_pieces)
+	red_count = len(red_pieces)
 
 
 def display_board():
@@ -163,16 +167,16 @@ def propogate_pieces(cap_row, filler_row, playable_rows):
 
 def play():
 	turn = 0
-	jumped = False
+	jumping = False
 	move_selection = []
 	while True:
 		turn = turn + 1
 		if turn % 2 != 0:
 			print('Round {0}, {1}\'s turn'.format(turn, black_name))
-			turn, jumped, move_selection = player_turn(black_pieces, red_pieces, turn, jumped, move_selection, black_initial, red_initial)
+			turn, jumping, move_selection = player_turn(black_pieces, red_pieces, turn, jumping, move_selection, black_initial, red_initial)
 		else:
 			print('Round {0}, {1}\'s turn'.format(turn, red_name))
-			turn, jumped, move_selection = player_turn(red_pieces, black_pieces, turn, jumped, move_selection, red_initial, black_initial)
+			turn, jumping, move_selection = player_turn(red_pieces, black_pieces, turn, jumping, move_selection, red_initial, black_initial)
 		if len(black_pieces) == 0:
 			print('X\'s win!')
 			break
@@ -191,10 +195,10 @@ def play():
 				break
 
 
-def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token, opponent_token):
+def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, token, opponent_token):
 	global pieces_removed, last_token_removed
 
-	if jumped:
+	if jumping:
 		print('\nLast piece moved:')
 		print(str(moved_piece[1] + 1) + ',' + str(moved_piece[0] + 1))
 		print('You must move this piece.')
@@ -203,7 +207,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 		piece_selection = select_piece(player_pieces, opponent_pieces, token)
 	move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces, token)
 
-	jumped = False
+	jumping = False
 	if last_token_removed != opponent_token:
 		pieces_removed.clear()
 
@@ -213,7 +217,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 		last_token_removed = opponent_token
 		if can_jump(move_selection, player_pieces, opponent_pieces, token):
 			turn = turn - 1
-			jumped = True
+			jumping = True
 	player_pieces.pop(str(piece_selection))
 	player_pieces[str(move_selection)] = piece_type
 	king_me(move_selection, player_pieces)
@@ -221,7 +225,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 	refresh((36-((12-board_size)*2)))
 	display_board()
 
-	return turn, jumped, move_selection
+	return turn, jumping, move_selection
 
 
 def select_piece(player_pieces,opponent_pieces,token):
