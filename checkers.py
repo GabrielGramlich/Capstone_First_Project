@@ -130,12 +130,12 @@ def play():
 	turn = 0
 	while True:
 		turn = turn + 1
-		if turn % 2 == 0:
-			print('Round {}, player O goes'.format(turn))
-			turn = player_turn(red_pieces, black_pieces, turn)
-		else:
+		if turn % 2 != 0:
 			print('Round {}, player X goes'.format(turn))
 			turn = player_turn(black_pieces, red_pieces, turn)
+		else:
+			print('Round {}, player O goes'.format(turn))
+			turn = player_turn(red_pieces, black_pieces, turn)
 
 
 def player_turn(player_pieces, opponent_pieces, turn):
@@ -143,8 +143,8 @@ def player_turn(player_pieces, opponent_pieces, turn):
 	move_selection, jumped_piece = select_move(piece_selection, player_pieces, opponent_pieces)
 	if jumped_piece != None:
 		opponent_pieces.remove(jumped_piece)
-		if can_jump(move_selection, opponent_pieces):
-			# TODO Validate this
+		if can_jump(move_selection, player_pieces, opponent_pieces):
+			# TODO Make them grab the same piece
 			turn = turn - 1
 	player_pieces.remove(piece_selection)
 	player_pieces.append(move_selection)
@@ -229,15 +229,15 @@ def jumping(jumped_piece,opponent_pieces):
 		return False
 
 
-def can_jump(selection, opponent_pieces):
+def can_jump(selection, player_pieces, opponent_pieces):
 	possible = False
-	if [selection[0] - 1, selection[1] - 1] in opponent_pieces:
+	if [selection[0] - 1, selection[1] - 1] in opponent_pieces and [selection[0] - 2, selection[1] - 2] not in player_pieces and [selection[0] - 2, selection[1] - 2] not in opponent_pieces:
 		possible = True
-	if [selection[0] - 1, selection[1] + 1] in opponent_pieces:
+	if [selection[0] + 1, selection[1] - 1] in opponent_pieces and [selection[0] + 2, selection[1] - 2] not in player_pieces and [selection[0] + 2, selection[1] - 2] not in opponent_pieces:
 		possible = True
-	if [selection[0] + 1, selection[1] - 1] in opponent_pieces:
+	if [selection[0] - 1, selection[1] + 1] in opponent_pieces and [selection[0] - 2, selection[1] + 2] not in player_pieces and [selection[0] - 2, selection[1] + 2] not in opponent_pieces:
 		possible = True
-	if [selection[0] + 1, selection[1] + 1] in opponent_pieces:
+	if [selection[0] + 1, selection[1] + 1] in opponent_pieces and [selection[0] + 2, selection[1] + 2] not in player_pieces and [selection[0] + 2, selection[1] + 2] not in opponent_pieces:
 		possible = True
 
 	return possible
