@@ -9,10 +9,10 @@ removed from the list and a new value is added. Changing this logic will break t
 
 import sys, time
 
-black_pieces = []
-red_pieces = []
+black_pieces = {}
+red_pieces = {}
 board_size = 0
-pieces_removed = []
+pieces_removed = {}
 last_token_removed = ''
 
 def main():
@@ -66,17 +66,17 @@ def create_starting_pieces():
 			if x < ((board_size - 2) / 2):	# If on black's side of the board
 				if x % 2 != 0:
 					if y % 2 != 0:
-						black_pieces.append([x,y,'N'])
+						black_pieces[str([x,y])] = 'N'
 				else:
 					if y % 2 == 0:
-						black_pieces.append([x,y,'N'])
+						black_pieces[str([x,y])] = 'N'
 			elif x > (((board_size - 2) / 2) + 1):	# If on red's side of the board
 				if x % 2 != 0:
 					if y % 2 != 0:
-						red_pieces.append([x,y,'N'])
+						red_pieces[str([x,y])] = 'N'
 				else:
 					if y % 2 == 0:
-						red_pieces.append([x,y,'N'])
+						red_pieces[str([x,y])] = 'N'
 
 
 def display_board():
@@ -105,20 +105,23 @@ def get_playable_rows():
 		else:
 			row = str(x + 1) + ' |'
 		for y in range(board_size):
-			if [x,y,'N'] in black_pieces:
-				row = row + ' X |'
-			elif [x,y,'K'] in black_pieces:
-				row = row + '<X>|'
-			elif [x,y,'N'] in red_pieces:
-				row = row + ' O |'
-			elif [x,y,'K'] in red_pieces:
-				row = row + '<O>|'
+			if str([x,y]) in black_pieces:
+				if black_pieces.get(str([x,y])) == 'N':
+					row = row + ' X |'
+				elif black_pieces.get(str([x,y])) == 'K':
+					row = row + '<X>|'
+			elif str([x,y]) in red_pieces:
+				if red_pieces.get(str([x,y])) == 'N':
+					row = row + ' O |'
+				elif red_pieces.get(str([x,y])) == 'K':
+					row = row + '<O>|'
 			elif (x % 2 == 0 and y % 2 != 0) or (x % 2 != 0 and y % 2 == 0):
 				row = row + ' * |'
-			elif [x,y,'N'] in pieces_removed:
-				row = row + '[' + last_token_removed + ']|'
-			elif [x,y,'K'] in pieces_removed:
-				row = row + '{' + last_token_removed + '}|'
+			elif str([x,y]) in pieces_removed:
+				if pieces_removed.get(str([x,y])) == 'N':
+					row = row + '[' + last_token_removed + ']|'
+				elif pieces_removed.get(str([x,y])) == 'K':
+					row = row + '{' + last_token_removed + '}|'
 			else:
 				row = row + '   |'
 		if x < 9:
@@ -128,6 +131,18 @@ def get_playable_rows():
 		playable_rows.append(row)
 
 	return playable_rows
+
+
+def convert_to_list(string):
+	back_to_list = list(string)
+
+	checklist = ['[',']',',',' ']
+	for character in checklist:
+		while character in back_to_list:
+			back_to_list.remove(character)
+
+	return back_to_list
+
 
 
 def propogate_pieces(cap_row, filler_row, playable_rows):
@@ -169,22 +184,21 @@ def player_turn(player_pieces, opponent_pieces, turn, jumped, moved_piece, token
 		piece_selection = moved_piece
 	else:
 		piece_selection = select_piece(player_pieces, opponent_pieces)
-	move_selection, jumped_piece = select_move(piece_selection, player_pieces, opponent_pieces)
+	move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces)
 
 	jumped = False
 	if last_token_removed != token:
 		pieces_removed.clear()
 
 	if jumped_piece != None:
-		opponent_pieces.remove(jumped_piece)
-		pieces_removed.append(jumped_piece)
+		opponent_pieces.pop(str([int(jumped_piece[0]),int(jumped_piece[1])]))
+		pieces_removed[str(jumped_piece)] = jumped_piece_type
 		last_token_removed = token
 		if can_jump(move_selection, player_pieces, opponent_pieces):
 			turn = turn - 1
 			jumped = True
-	player_pieces.remove(piece_selection)
-	player_pieces.append(move_selection)
-	player_pieces.sort()
+	player_pieces.pop(str(piece_selection))
+	player_pieces[str(move_selection)] = piece_type
 	refresh_rate = 36 - ((12-board_size)*2)
 	refresh((36-((12-board_size)*2)))
 	display_board()
@@ -201,9 +215,9 @@ def select_piece(player_pieces,opponent_pieces):
 			y = int(input('Choose a number on the x axis: ')) - 1
 			refresh_rate = 3
 			x = int(input('Choose a number on the y axis: ')) - 1
-			if [x,y,'N'] in player_pieces and (can_move(x,y,player_pieces,opponent_pieces) or can_jump([x,y],player_pieces,opponent_pieces)):
+			if str([x,y]) in player_pieces and (can_move(x,y,player_pieces,opponent_pieces) or can_jump([x,y],player_pieces,opponent_pieces)):
 				invalid = False
-				return [x,y,'N']
+				return [x,y]
 			else:
 				refresh(3)
 				print('Invalid selection. Please select a different piece.')
@@ -224,13 +238,14 @@ def select_move(piece, player_pieces, opponent_pieces):
 			y = int(input('Choose a number on the x axis: ')) - 1
 			refresh_rate = 3
 			x = int(input('Choose a number on the y axis: ')) - 1
-			jumped_piece = [((x + piece[0]) / 2),((y + piece[1]) / 2),'N']
+			jumped_piece = [((x + piece[0]) / 2),((y + piece[1]) / 2)]
 			if empty(x,y,player_pieces,opponent_pieces) and one_space_away(x,y,piece):
 				invalid = False
-				return [x,y,'N'], None
+				return [x,y], 'N', None, None
 			elif empty(x,y,player_pieces,opponent_pieces) and two_spaces_away(x,y,piece) and jumping(jumped_piece,opponent_pieces):
+					jumped_piece_type = opponent_pieces.get(str(jumped_piece))
 					invalid = False
-					return [x,y,'N'], jumped_piece
+					return [x,y], 'N', jumped_piece, jumped_piece_type
 			else:
 				refresh(3)
 				print('Invalid selection. Please select a different square.')
@@ -240,7 +255,7 @@ def select_move(piece, player_pieces, opponent_pieces):
 
 
 def empty(x,y,player_pieces,opponent_pieces):
-	if [x,y,'N'] not in player_pieces and [x,y,'N'] not in opponent_pieces:
+	if str([x,y]) not in player_pieces and str([x,y]) not in opponent_pieces:
 		return True
 	else:
 		return False
@@ -261,21 +276,24 @@ def two_spaces_away(x,y,piece):
 
 
 def jumping(jumped_piece,opponent_pieces):
-	if jumped_piece in opponent_pieces:
-		return True
+	if jumped_piece[0] % 1 == 0 and jumped_piece[1] % 1 == 0:
+		if str([int(jumped_piece[0]),int(jumped_piece[1])]) in opponent_pieces:
+			return True
+		else:
+			return False
 	else:
 		return False
 
 
 def can_jump(selection, player_pieces, opponent_pieces):
 	possible = False
-	if [selection[0] - 1, selection[1] - 1, 'N'] in opponent_pieces and [selection[0] - 2, selection[1] - 2, 'N'] not in player_pieces and [selection[0] - 2, selection[1] - 2, 'N'] not in opponent_pieces:
+	if str([selection[0] - 1, selection[1] - 1]) in opponent_pieces and str([selection[0] - 2, selection[1] - 2]) not in player_pieces and str([selection[0] - 2, selection[1] - 2]) not in opponent_pieces:
 		possible = True
-	if [selection[0] + 1, selection[1] - 1, 'N'] in opponent_pieces and [selection[0] + 2, selection[1] - 2, 'N'] not in player_pieces and [selection[0] + 2, selection[1] - 2, 'N'] not in opponent_pieces:
+	if str([selection[0] + 1, selection[1] - 1]) in opponent_pieces and str([selection[0] + 2, selection[1] - 2]) not in player_pieces and str([selection[0] + 2, selection[1] - 2]) not in opponent_pieces:
 		possible = True
-	if [selection[0] - 1, selection[1] + 1, 'N'] in opponent_pieces and [selection[0] - 2, selection[1] + 2, 'N'] not in player_pieces and [selection[0] - 2, selection[1] + 2, 'N'] not in opponent_pieces:
+	if str([selection[0] - 1, selection[1] + 1]) in opponent_pieces and str([selection[0] - 2, selection[1] + 2]) not in player_pieces and str([selection[0] - 2, selection[1] + 2]) not in opponent_pieces:
 		possible = True
-	if [selection[0] + 1, selection[1] + 1, 'N'] in opponent_pieces and [selection[0] + 2, selection[1] + 2, 'N'] not in player_pieces and [selection[0] + 2, selection[1] + 2, 'N'] not in opponent_pieces:
+	if str([selection[0] + 1, selection[1] + 1]) in opponent_pieces and str([selection[0] + 2, selection[1] + 2]) not in player_pieces and str([selection[0] + 2, selection[1] + 2]) not in opponent_pieces:
 		possible = True
 
 	return possible
@@ -283,13 +301,13 @@ def can_jump(selection, player_pieces, opponent_pieces):
 
 def can_move(x, y, player_pieces, opponent_pieces):
 	possible = False
-	if [x - 1, y - 1, 'N'] not in player_pieces and [x - 1, y - 1, 'N'] not in opponent_pieces:
+	if str([x - 1, y - 1]) not in player_pieces and str([x - 1, y - 1]) not in opponent_pieces:
 		possible = True
-	if [x + 1, y - 1, 'N'] not in player_pieces and [x + 1, y - 1, 'N'] not in opponent_pieces:
+	if str([x + 1, y - 1]) not in player_pieces and str([x + 1, y - 1]) not in opponent_pieces:
 		possible = True
-	if [x - 1, y + 1, 'N'] not in player_pieces and [x - 1, y + 1, 'N'] not in opponent_pieces:
+	if str([x - 1, y + 1]) not in player_pieces and str([x - 1, y + 1]) not in opponent_pieces:
 		possible = True
-	if [x + 1, y + 1, 'N'] not in player_pieces and [x + 1, y + 1, 'N'] not in opponent_pieces:
+	if str([x + 1, y + 1]) not in player_pieces and str([x + 1, y + 1]) not in opponent_pieces:
 		possible = True
 
 	return possible
