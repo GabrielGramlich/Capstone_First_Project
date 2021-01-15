@@ -277,11 +277,11 @@ def select_move(piece, player_pieces, opponent_pieces, token):
 			jumped_piece = [((x + piece[0]) / 2),((y + piece[1]) / 2)]
 			if empty(x,y,player_pieces,opponent_pieces) and one_space_away(x,y,piece) and is_moving_forward(piece, [x,y], player_pieces, token):
 				invalid = False
-				return [x,y], player_pieces.get(str([x,y])), None, None # Correct this
+				return [x,y], player_pieces.get(str(piece)), None, None # Correct this
 			elif empty(x,y,player_pieces,opponent_pieces) and two_spaces_away(x,y,piece) and jumping(jumped_piece,opponent_pieces) and is_moving_forward(piece, [x,y], player_pieces, token):
 					jumped_piece_type = opponent_pieces.get(str([int(jumped_piece[0]),int(jumped_piece[1])]))
 					invalid = False
-					return [x,y], player_pieces.get(str([x,y])), jumped_piece, jumped_piece_type # Correct this
+					return [x,y], player_pieces.get(str(piece)), jumped_piece, jumped_piece_type # Correct this
 			else:
 				refresh(3)
 				print('Invalid selection. Please select a different square.')
