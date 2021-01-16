@@ -13,6 +13,7 @@ red_name = ''
 board_size = 0
 pieces_removed = {}
 last_token_removed = ''
+last_piece_moved = []
 black_count = 0
 red_count = 0
 
@@ -216,8 +217,17 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 		print('You must move this piece.')
 		piece_selection = moved_piece
 	else:
-		piece_selection = select_piece(player_pieces, opponent_pieces, token)
-	move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces, token)
+		while True:
+			piece_selection = select_piece(player_pieces, opponent_pieces, token)
+			response = confirm_selection()
+			if response == 'y':
+				break
+
+	while True:
+		move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces, token)
+		response = confirm_selection()
+		if response == 'y':
+			break
 
 	jumping = False
 	if last_token_removed != opponent_token:
@@ -236,12 +246,23 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 			jumping = True
 	player_pieces.pop(str(piece_selection))
 	player_pieces[str(move_selection)] = piece_type
+	last_piece_moved.clear()
+	last_piece_moved.append(move_selection)
 	king_me(move_selection, player_pieces)
 	refresh_rate = 40 - ((12-board_size)*2)
 	refresh(refresh_rate)
 	display_board()
 
 	return turn, jumping, move_selection
+
+
+def confirm_selection():
+	response = ''
+	while response != 'n' and response != 'y':
+		response = input('Are you satisfied with your selection? (y/n) ').lower()
+		refresh(1)
+
+	return response
 
 
 def select_piece(player_pieces,opponent_pieces,token):
