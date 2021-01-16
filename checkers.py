@@ -254,7 +254,7 @@ def select_piece(player_pieces,opponent_pieces,token):
 			refresh_rate = 3
 			x = int(input('Choose a number on the y (horizontal) axis: ')) - 1
 			selection = [x,y]
-			if (str(selection) in player_pieces and (can_move(selection,player_pieces,opponent_pieces))) or (str(selection) in player_pieces and can_jump(selection,player_pieces,opponent_pieces,token)):
+			if (str(selection) in player_pieces and (can_move(selection,player_pieces,opponent_pieces, token))) or (str(selection) in player_pieces and can_jump(selection,player_pieces,opponent_pieces,token)):
 				invalid = False
 				return [x,y]
 			else:
@@ -360,20 +360,24 @@ def is_moving_forward(old_position, new_position, player_pieces, token):
 	return possible
 
 
-def can_move(selection, player_pieces, opponent_pieces):
+def can_move(selection, player_pieces, opponent_pieces, token):
+	piece_type = player_pieces.get(str(selection))
+
 	possible = False
-	if str([selection[0] - 1, selection[1] - 1]) not in player_pieces and str([selection[0] - 1, selection[1] - 1]) not in opponent_pieces:
-		if selection[0]-1 >= 0 and selection[1]-1 >= 0:
-			possible = True
-	if str([selection[0] - 1, selection[1] + 1]) not in player_pieces and str([selection[0] - 1, selection[1] + 1]) not in opponent_pieces:
-		if selection[0]-1 >= 0 and selection[1]+1 <= (board_size - 1):
-			possible = True
-	if str([selection[0] + 1, selection[1] - 1]) not in player_pieces and str([selection[0] + 1, selection[1] - 1]) not in opponent_pieces:
-		if selection[0]+1 <= (board_size - 1) and selection[1]-1 >= 0:
-			possible = True
-	if str([selection[0] + 1, selection[1] + 1]) not in player_pieces and str([selection[0] + 1, selection[1] + 1]) not in opponent_pieces:
-		if selection[0]+1 <= (board_size - 1) and selection[1]+1 <= (board_size - 1):
-			possible = True
+	if piece_type == 'K' or token == red_initial:
+		if str([selection[0] - 1, selection[1] - 1]) not in player_pieces and str([selection[0] - 1, selection[1] - 1]) not in opponent_pieces:
+			if selection[0]-1 >= 0 and selection[1]-1 >= 0:
+				possible = True
+		if str([selection[0] - 1, selection[1] + 1]) not in player_pieces and str([selection[0] - 1, selection[1] + 1]) not in opponent_pieces:
+			if selection[0]-1 >= 0 and selection[1]+1 <= (board_size - 1):
+				possible = True
+	if piece_type == 'K' or token == black_initial:
+		if str([selection[0] + 1, selection[1] - 1]) not in player_pieces and str([selection[0] + 1, selection[1] - 1]) not in opponent_pieces:
+			if selection[0]+1 <= (board_size - 1) and selection[1]-1 >= 0:
+				possible = True
+		if str([selection[0] + 1, selection[1] + 1]) not in player_pieces and str([selection[0] + 1, selection[1] + 1]) not in opponent_pieces:
+			if selection[0]+1 <= (board_size - 1) and selection[1]+1 <= (board_size - 1):
+				possible = True
 
 	return possible
 
@@ -389,7 +393,7 @@ def no_moves_left(player_pieces, opponent_pieces, token):
 
 	for piece in player_pieces:
 		piece_list = convert_to_list(piece)
-		if can_move(piece_list, player_pieces, opponent_pieces) or can_jump(piece_list, player_pieces, opponent_pieces, token):
+		if can_move(piece_list, player_pieces, opponent_pieces, token) or can_jump(piece_list, player_pieces, opponent_pieces, token):
 			no_moves = False
 			break
 
