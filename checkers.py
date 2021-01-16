@@ -13,7 +13,7 @@ red_name = ''
 board_size = 0
 pieces_removed = {}
 last_token_removed = ''
-# last_piece_moved = []
+last_piece_moved = []
 black_count = 0
 red_count = 0
 
@@ -130,7 +130,12 @@ def get_playable_rows():
 		else:
 			row = str(x + 1) + ' |'
 		for y in range(board_size):
-			if str([x,y]) in black_pieces:
+			if [x,y] == last_piece_moved:
+				if str([x,y]) in black_pieces:
+					row = row + '|' + black_initial + '||'
+				elif str([x,y]) in red_pieces:
+					row = row + '|' + red_initial + '||'
+			elif str([x,y]) in black_pieces:
 				if black_pieces.get(str([x,y])) == 'N':
 					row = row + ' ' + black_initial + ' |'
 				elif black_pieces.get(str([x,y])) == 'K':
@@ -209,7 +214,7 @@ def play():
 
 
 def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, token, opponent_token):
-	global pieces_removed, last_token_removed, black_count, red_count
+	global pieces_removed, last_token_removed, black_count, red_count, last_piece_moved
 
 	if jumping:
 		print('\nLast piece moved:')
@@ -246,8 +251,8 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 			jumping = True
 	player_pieces.pop(str(piece_selection))
 	player_pieces[str(move_selection)] = piece_type
-	# last_piece_moved.clear()
-	# last_piece_moved.append(move_selection)
+	last_piece_moved.clear()
+	last_piece_moved = move_selection
 	king_me(move_selection, player_pieces)
 	refresh_rate = 40 - ((12-board_size)*2)
 	refresh(refresh_rate)
