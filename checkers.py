@@ -254,7 +254,7 @@ def select_piece(player_pieces,opponent_pieces,token):
 			refresh_rate = 3
 			x = int(input('Choose a number on the y (horizontal) axis: ')) - 1
 			selection = [x,y]
-			if (str(selection) in player_pieces and (can_move(selection,player_pieces,opponent_pieces)) or (str(selection) in player_pieces and can_jump(selection,player_pieces,opponent_pieces,token))):
+			if (str(selection) in player_pieces and (can_move(selection,player_pieces,opponent_pieces))) or (str(selection) in player_pieces and can_jump(selection,player_pieces,opponent_pieces,token)):
 				invalid = False
 				return [x,y]
 			else:
