@@ -13,7 +13,7 @@ red_name = ''
 board_size = 0
 pieces_removed = {}
 last_token_removed = ''
-last_piece_moved = []
+# last_piece_moved = []
 black_count = 0
 red_count = 0
 
@@ -246,8 +246,8 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 			jumping = True
 	player_pieces.pop(str(piece_selection))
 	player_pieces[str(move_selection)] = piece_type
-	last_piece_moved.clear()
-	last_piece_moved.append(move_selection)
+	# last_piece_moved.clear()
+	# last_piece_moved.append(move_selection)
 	king_me(move_selection, player_pieces)
 	refresh_rate = 40 - ((12-board_size)*2)
 	refresh(refresh_rate)
