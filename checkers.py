@@ -1,7 +1,5 @@
 import sys, time
 
-# TODO Unselect a piece
-# TODO Mark last piece
 # TODO make validation messages more meaningful
 
 black_pieces = {}
