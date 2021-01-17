@@ -4,6 +4,8 @@ import sys, time
 # TODO add comments
 # TODO make code follow SRP
 # TODO move code around
+# TODO correct info row spacing
+# TODO correct n selection formatting where player verifies they're satisfied
 
 black_pieces = {}
 red_pieces = {}
@@ -233,7 +235,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 			if response == 'y':
 				break
 
-	refresh_rate = 37 - ((12-board_size)*2)
+	refresh_rate = 36 - ((12-board_size)*2)
 	refresh(refresh_rate)
 	display_board(turn, token)
 
@@ -273,6 +275,7 @@ def confirm_selection():
 	response = ''
 	while response != 'n' and response != 'y':
 		response = input('Are you satisfied with your selection? (y/n) ').lower()
+		refresh(1)
 
 	return response
 
