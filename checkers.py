@@ -2,6 +2,8 @@ import sys, time
 
 # TODO make validation messages more meaningful
 # TODO add comments
+# TODO make code follow SRP
+# TODO move code around
 
 black_pieces = {}
 red_pieces = {}
