@@ -1,6 +1,7 @@
 import sys, time
 
 # TODO make validation messages more meaningful
+# TODO add comments
 
 black_pieces = {}
 red_pieces = {}
@@ -226,6 +227,10 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 			if response == 'y':
 				break
 
+	refresh_rate = 37 - ((12-board_size)*2)
+	refresh(refresh_rate)
+	display_board()
+
 	while True:
 		move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces, token)
 		response = confirm_selection()
@@ -252,7 +257,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 	last_piece_moved.clear()
 	last_piece_moved = move_selection
 	king_me(move_selection, player_pieces)
-	refresh_rate = 40 - ((12-board_size)*2)
+	refresh_rate = 36 - ((12-board_size)*2)
 	refresh(refresh_rate)
 	display_board()
 
@@ -263,7 +268,6 @@ def confirm_selection():
 	response = ''
 	while response != 'n' and response != 'y':
 		response = input('Are you satisfied with your selection? (y/n) ').lower()
-		refresh(1)
 
 	return response
 
