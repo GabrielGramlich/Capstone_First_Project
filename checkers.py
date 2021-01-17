@@ -166,11 +166,13 @@ def get_playable_rows():
 
 
 def get_display_rows(turn, token):
-	pad_count = 0
+	pad_count = 15
 	if len(black_name) >= len(red_name):
-		pad_count = len(black_name) + 3
+		if len(black_name) > pad_count:
+			pad_count = len(black_name) + 3
 	else:
-		pad_count = len(red_name) + 3
+		if len(red_name) > pad_count:
+			pad_count = len(red_name) + 3
 	info_row = 'Pieces remaining:'
 	black_row = '{0}{1}'.format(pad_string(black_name + ':', pad_count, False), black_count)
 	red_row = '{0}{1}'.format(pad_string(red_name + ':', pad_count, False), red_count)
