@@ -4,7 +4,7 @@ import sys, time
 # TODO add comments
 # TODO make code follow SRP
 # TODO move code around
-# TODO correct info row spacing
+# TODO correct current player bug
 
 black_pieces = {}
 red_pieces = {}
