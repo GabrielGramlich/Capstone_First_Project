@@ -4,7 +4,6 @@ import sys, time
 # TODO add comments
 # TODO make code follow SRP
 # TODO move code around
-# TODO correct current player bug
 
 black_pieces = {}
 red_pieces = {}
@@ -253,8 +252,6 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 	refresh_rate = 36 - ((12-board_size)*2)
 	refresh(refresh_rate)
 	display_board(turn, token)
-	# print(token)
-	# time.sleep(10)
 
 	while True:
 		move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces, token)
@@ -283,9 +280,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 	last_piece_moved = move_selection
 	king_me(move_selection, player_pieces)
 	refresh(refresh_rate)
-	display_board(turn, token)
-	# print(token)
-	# time.sleep(10)
+	display_board(turn, opponent_token)
 
 	return turn, jumping, move_selection
 
