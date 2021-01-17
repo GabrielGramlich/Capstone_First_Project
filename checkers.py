@@ -166,15 +166,29 @@ def get_playable_rows():
 
 
 def get_display_rows(turn, token):
+	pad_count = 0
+	if len(black_name) >= len(red_name):
+		pad_count = len(black_name) + 3
+	else:
+		pad_count = len(red_name) + 3
 	info_row = 'Pieces remaining:'
-	black_row = '{0}:\t{1}'.format(black_name, black_count)
-	red_row = '{0}:\t{1}'.format(red_name, red_count)
+	black_row = '{0}{1}'.format(pad_string(black_name + ':', pad_count, False), black_count)
+	red_row = '{0}{1}'.format(pad_string(red_name + ':', pad_count, False), red_count)
 	if token == black_initial:
 		current_player_row = 'Round {0}: {1}'.format(turn, black_name)
 	elif token == red_initial:
 		current_player_row = 'Round {0}: {1}'.format(turn, red_name)
 
 	return info_row, black_row, red_row, current_player_row
+
+
+def pad_string(string, pad_count, is_left=True, character=' '):
+	while len(string) < pad_count:
+		if is_left:
+			string = character + string
+		else:
+			string = string + character
+	return string
 
 
 def propogate_pieces(cap_row, filler_row, playable_rows, info_row, black_row, red_row, current_player_row):
