@@ -25,7 +25,7 @@ def setup_board():
 	get_players_initials()
 	get_board_size()
 	create_starting_pieces()
-	display_board()
+	display_board(1, black_initial)
 
 
 def get_players_initials():
@@ -102,11 +102,11 @@ def create_starting_pieces():
 	red_count = len(red_pieces)
 
 
-def display_board():
+def display_board(turn, token):
 	cap_row, filler_row = get_nonplayable_rows()
 	playable_rows = get_playable_rows()
-	info_row, black_row, red_row = get_display_rows()
-	propogate_pieces(cap_row, filler_row, playable_rows, info_row, black_row, red_row)
+	info_row, black_row, red_row, current_player_row = get_display_rows(turn, token)
+	propogate_pieces(cap_row, filler_row, playable_rows, info_row, black_row, red_row, current_player_row)
 
 
 def get_nonplayable_rows():
@@ -162,14 +162,19 @@ def get_playable_rows():
 	return playable_rows
 
 
-def get_display_rows():
+def get_display_rows(turn, token):
 	info_row = 'Pieces remaining:'
 	black_row = '{0}:\t{1}'.format(black_name, black_count)
 	red_row = '{0}:\t{1}'.format(red_name, red_count)
-	return info_row, black_row, red_row
+	if token == black_initial:
+		current_player_row = 'Round {0}: {1}'.format(turn, black_name)
+	elif token == red_initial:
+		current_player_row = 'Round {0}: {1}'.format(turn, red_name)
+
+	return info_row, black_row, red_row, current_player_row
 
 
-def propogate_pieces(cap_row, filler_row, playable_rows, info_row, black_row, red_row):
+def propogate_pieces(cap_row, filler_row, playable_rows, info_row, black_row, red_row, current_player_row):
 	print(cap_row)
 	print(filler_row)
 	for i in range(len(playable_rows)):
@@ -180,6 +185,7 @@ def propogate_pieces(cap_row, filler_row, playable_rows, info_row, black_row, re
 	print(info_row)
 	print(black_row)
 	print(red_row)
+	print(current_player_row)
 
 
 def play():
@@ -189,10 +195,8 @@ def play():
 	while True:
 		turn = turn + 1
 		if turn % 2 != 0:
-			print('Round {0}: {1}'.format(turn, black_name))
 			turn, jumping, move_selection = player_turn(black_pieces, red_pieces, turn, jumping, move_selection, black_initial, red_initial)
 		else:
-			print('Round {0}: {1}'.format(turn, red_name))
 			turn, jumping, move_selection = player_turn(red_pieces, black_pieces, turn, jumping, move_selection, red_initial, black_initial)
 		if len(black_pieces) == 0:
 			print('X\'s win!')
@@ -229,7 +233,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 
 	refresh_rate = 37 - ((12-board_size)*2)
 	refresh(refresh_rate)
-	display_board()
+	display_board(turn, token)
 
 	while True:
 		move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces, token)
@@ -257,9 +261,8 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 	last_piece_moved.clear()
 	last_piece_moved = move_selection
 	king_me(move_selection, player_pieces)
-	refresh_rate = 36 - ((12-board_size)*2)
 	refresh(refresh_rate)
-	display_board()
+	display_board(turn, token)
 
 	return turn, jumping, move_selection
 
