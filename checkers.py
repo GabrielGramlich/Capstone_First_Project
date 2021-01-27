@@ -458,6 +458,8 @@ def select_valid_move(piece_selection, player_pieces, opponent_pieces, token):
 		else:
 			refresh(4)
 
+	return move_selection, piece_type, jumped_piece, jumped_piece_type
+
 
 def select_move(piece, player_pieces, opponent_pieces, token):
 	invalid = True
