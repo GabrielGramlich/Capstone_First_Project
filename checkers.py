@@ -468,24 +468,31 @@ def select_move(piece, player_pieces, opponent_pieces, token):
 	print('\nPlease select where you would like to move the piece.')
 	while invalid:
 		refresh_rate = 2
-		try:
-			y = int(input('Choose a number on the x (vertical) axis: ')) - 1
-			refresh_rate = 3
-			x = int(input('Choose a number on the y (horizontal) axis: ')) - 1
-			jumped_piece = [((x + piece[0]) / 2),((y + piece[1]) / 2)]
-			if empty(x,y,player_pieces,opponent_pieces) and one_space_away(x,y,piece) and is_moving_forward(piece, [x,y], player_pieces, token):
+		x,y,refresh_rate = get_selection(refresh_rate)
+		jumped_piece = [((x + piece[0]) / 2),((y + piece[1]) / 2)]
+		if empty(x,y,player_pieces,opponent_pieces) and one_space_away(x,y,piece) and is_moving_forward(piece, [x,y], player_pieces, token):
+			invalid = False
+			return [x,y], player_pieces.get(str(piece)), None, None
+		elif empty(x,y,player_pieces,opponent_pieces) and two_spaces_away(x,y,piece) and jumping(jumped_piece,opponent_pieces) and is_moving_forward(piece, [x,y], player_pieces, token):
+				jumped_piece_type = opponent_pieces.get(str([int(jumped_piece[0]),int(jumped_piece[1])]))
 				invalid = False
-				return [x,y], player_pieces.get(str(piece)), None, None
-			elif empty(x,y,player_pieces,opponent_pieces) and two_spaces_away(x,y,piece) and jumping(jumped_piece,opponent_pieces) and is_moving_forward(piece, [x,y], player_pieces, token):
-					jumped_piece_type = opponent_pieces.get(str([int(jumped_piece[0]),int(jumped_piece[1])]))
-					invalid = False
-					return [x,y], player_pieces.get(str(piece)), jumped_piece, jumped_piece_type
-			else:
-				refresh(3)
-				print('Invalid selection. Please select a different square.')
-		except ValueError:
-			refresh(refresh_rate)
-			print('Input must be an integer. Please try again.')
+				return [x,y], player_pieces.get(str(piece)), jumped_piece, jumped_piece_type
+		else:
+			refresh(3)
+			print('Invalid selection. Please select a different square.')
+
+
+def get_selection(refresh_rate):
+	try:
+		y = int(input('Choose a number on the x (vertical) axis: ')) - 1
+		refresh_rate = 3
+		x = int(input('Choose a number on the y (horizontal) axis: ')) - 1
+		return x, y, refresh_rate
+	except ValueError:
+		refresh(refresh_rate)
+		print('Input must be an integer. Please try again.')
+		return None, None, refresh_rate
+
 
 
 def empty(x,y,player_pieces,opponent_pieces):
