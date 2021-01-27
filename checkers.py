@@ -465,7 +465,7 @@ def select_move(piece, player_pieces, opponent_pieces, token):
 	while invalid:
 		refresh_rate = 2
 		x,y,refresh_rate = get_selection(refresh_rate)
-		jumped_piece = get_jumped_piece(x,y)
+		jumped_piece = get_jumped_piece(x,y,piece)
 		if can_move_one_space(x,y,player_pieces,opponent_pieces,piece,token):
 			invalid = False
 			return [x,y], player_pieces.get(str(piece)), None, None
@@ -490,7 +490,7 @@ def get_selection(refresh_rate):
 		return None, None, refresh_rate
 
 
-def get_jumped_piece(x,y):
+def get_jumped_piece(x,y,piece):
 	return [((x + piece[0]) / 2),((y + piece[1]) / 2)]
 
 
