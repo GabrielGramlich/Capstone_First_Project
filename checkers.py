@@ -616,13 +616,23 @@ def no_moves_left(player_pieces, opponent_pieces, token):
 
 def convert_to_list(string):
 	back_to_list = list(string)
-	new_list = []
+	back_to_list = remove_characters(back_to_list)
+	new_list = convert_characters_to_numbers(back_to_list)
 
+	return new_list
+
+
+def remove_characters(back_to_list):
 	checklist = ['[',']',',',' ']
 	for character in checklist:
 		while character in back_to_list:
 			back_to_list.remove(character)
 
+	return back_to_list
+
+
+def convert_characters_to_numbers(back_to_list)
+	new_list = []
 	for number in back_to_list:
 		new_list.append(int(number))
 
