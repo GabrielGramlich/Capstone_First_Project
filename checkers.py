@@ -377,18 +377,27 @@ def update_counts(opponent_token):
 
 def get_piece(jumping, moved_piece, player_pieces, opponent_pieces, token):
 	if jumping:
-		print('\nLast piece moved:')
-		print(str(moved_piece[1] + 1) + ',' + str(moved_piece[0] + 1))
-		print('You must move this piece.')
-		piece_selection = moved_piece
+		display_jumping_piece(moved_piece)
+		return moved_piece
 	else:
-		while True:
-			piece_selection = select_piece(player_pieces, opponent_pieces, token)
-			response = confirm_selection()
-			if response == 'y':
-				break
-			else:
-				refresh(4)
+		return get_non_jumping_piece(player_pieces, opponent_pieces, token)
+
+
+def display_jumping_piece(moved_piece):
+	print('\nLast piece moved:')
+	print(str(moved_piece[1] + 1) + ',' + str(moved_piece[0] + 1))
+	print('You must move this piece.')
+
+
+def get_non_jumping_piece(player_pieces, opponent_pieces, token):
+	while True:
+		piece_selection = select_piece(player_pieces, opponent_pieces, token)
+		response = confirm_selection()
+		if response == 'y':
+			break
+		else:
+			refresh(4)
+
 	return piece_selection
 
 
@@ -490,19 +499,31 @@ def can_jump(selection, player_pieces, opponent_pieces, token):
 
 	possible = False
 	if piece_type == 'K' or token == red_initial:
-		if str([selection[0] - 1, selection[1] - 1]) in opponent_pieces and str([selection[0] - 2, selection[1] - 2]) not in player_pieces and str([selection[0] - 2, selection[1] - 2]) not in opponent_pieces:
-			if selection[0]-2 >= 0 and selection[1]-2 >= 0:
-				possible = True
-		if str([selection[0] - 1, selection[1] + 1]) in opponent_pieces and str([selection[0] - 2, selection[1] + 2]) not in player_pieces and str([selection[0] - 2, selection[1] + 2]) not in opponent_pieces:
-			if selection[0]-2 >= 0 and selection[1]+2 <= (board_size - 1):
-				possible = True
+		possible = red_can_jump(possible, selection, player_pieces, opponent_pieces)
 	if piece_type == 'K' or token == black_initial:
-		if str([selection[0] + 1, selection[1] - 1]) in opponent_pieces and str([selection[0] + 2, selection[1] - 2]) not in player_pieces and str([selection[0] + 2, selection[1] - 2]) not in opponent_pieces:
-			if selection[0]+2 <= (board_size - 1) and selection[1]-2 >= 0:
-				possible = True
-		if str([selection[0] + 1, selection[1] + 1]) in opponent_pieces and str([selection[0] + 2, selection[1] + 2]) not in player_pieces and str([selection[0] + 2, selection[1] + 2]) not in opponent_pieces:
-			if selection[0]+2 <= (board_size - 1) and selection[1]+2 <= (board_size - 1):
-				possible = True
+		possible = black_can_jump(possible, selection, player_pieces, opponent_pieces)
+
+	return possible
+
+
+def red_can_jump(possible, selection, player_pieces, opponent_pieces):
+	if str([selection[0] - 1, selection[1] - 1]) in opponent_pieces and str([selection[0] - 2, selection[1] - 2]) not in player_pieces and str([selection[0] - 2, selection[1] - 2]) not in opponent_pieces:
+		if selection[0]-2 >= 0 and selection[1]-2 >= 0:
+			possible = True
+	if str([selection[0] - 1, selection[1] + 1]) in opponent_pieces and str([selection[0] - 2, selection[1] + 2]) not in player_pieces and str([selection[0] - 2, selection[1] + 2]) not in opponent_pieces:
+		if selection[0]-2 >= 0 and selection[1]+2 <= (board_size - 1):
+			possible = True
+
+	return possible
+
+
+def black_can_jump(possible, selection, player_pieces, opponent_pieces):
+	if str([selection[0] + 1, selection[1] - 1]) in opponent_pieces and str([selection[0] + 2, selection[1] - 2]) not in player_pieces and str([selection[0] + 2, selection[1] - 2]) not in opponent_pieces:
+		if selection[0]+2 <= (board_size - 1) and selection[1]-2 >= 0:
+			possible = True
+	if str([selection[0] + 1, selection[1] + 1]) in opponent_pieces and str([selection[0] + 2, selection[1] + 2]) not in player_pieces and str([selection[0] + 2, selection[1] + 2]) not in opponent_pieces:
+		if selection[0]+2 <= (board_size - 1) and selection[1]+2 <= (board_size - 1):
+			possible = True
 
 	return possible
 
