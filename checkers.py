@@ -4,6 +4,7 @@ import sys, time
 # TODO add comments
 # TODO make code follow SRP
 # TODO organize code by section
+# TODO show piece selected
 
 black_pieces = {}
 red_pieces = {}
