@@ -316,15 +316,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 	refresh_rate = 36 - ((12-board_size)*2)
 	refresh(refresh_rate)
 	display_board(turn, token)
-
-	while True:
-		move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces, token)
-		response = confirm_selection()
-		if response == 'y':
-			break
-		else:
-			refresh(4)
-
+	move_selection, piece_type, jumped_piece, jumped_piece_type = select_valid_move(piece_selection, player_pieces, opponent_pieces, token)
 	jumping, turn = update_pieces(player_pieces, opponent_pieces, turn, token, opponent_token, piece_selection, move_selection, piece_type, jumped_piece, jumped_piece_type)
 	refresh(refresh_rate)
 	display_board(turn, opponent_token)
@@ -363,20 +355,14 @@ def select_piece(player_pieces,opponent_pieces,token):
 	print('\nPlease select which piece you would like to move.')
 	while invalid:
 		refresh_rate = 2
-		try:
-			y = int(input('Choose a number on the x (vertical) axis: ')) - 1
-			refresh_rate = 3
-			x = int(input('Choose a number on the y (horizontal) axis: ')) - 1
-			selection = [x,y]
-			if (str(selection) in player_pieces and (can_move(selection,player_pieces,opponent_pieces, token))) or (str(selection) in player_pieces and can_jump(selection,player_pieces,opponent_pieces,token)):
-				invalid = False
-				return [x,y]
-			else:
-				refresh(3)
-				print('Invalid selection. Please select a different piece.')
-		except ValueError:
-			refresh(refresh_rate)
-			print('Input must be an integer. Please try again.')
+		x,y,refresh_rate = get_selection(refresh_rate)
+		selection = [x,y]
+		if (str(selection) in player_pieces and (can_move(selection,player_pieces,opponent_pieces, token))) or (str(selection) in player_pieces and can_jump(selection,player_pieces,opponent_pieces,token)):
+			invalid = False
+			return [x,y]
+		else:
+			refresh(3)
+			print('Invalid selection. Please select a different piece.')
 
 
 
@@ -461,6 +447,16 @@ def confirm_selection():
 
 def response_invalid(response):
 	return response != 'n' and response != 'y'
+
+
+def select_valid_move(piece_selection, player_pieces, opponent_pieces, token):
+	while True:
+		move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces, token)
+		response = confirm_selection()
+		if response == 'y':
+			break
+		else:
+			refresh(4)
 
 
 def select_move(piece, player_pieces, opponent_pieces, token):
