@@ -548,9 +548,9 @@ def can_move(selection, player_pieces, opponent_pieces, token):
 
 	possible = False
 	if piece_type == 'K' or token == red_initial:
-		possible = red_can_move()
+		possible = red_can_move(possible, selection, player_pieces, opponent_pieces)
 	if piece_type == 'K' or token == black_initial:
-		possible = black_can_move()
+		possible = black_can_move(possible, selection, player_pieces, opponent_pieces)
 
 	return possible
 
