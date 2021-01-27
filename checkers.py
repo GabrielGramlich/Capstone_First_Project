@@ -523,17 +523,17 @@ def one_space_away(x,y,piece):
 def is_moving_forward(old_position, new_position, player_pieces, token):
 	piece_type = player_pieces.get(str(old_position))
 
-	possible = False
+	moving_forward = False
 	if piece_type == 'K':
-		possible = True
+		moving_forward = True
 	elif piece_type == 'N' and token == black_initial:
 		if old_position[0] < new_position[0]:
-			possible = True
+			moving_forward = True
 	elif piece_type == 'N' and token == red_initial:
 		if old_position[0] > new_position[0]:
-			possible = True
+			moving_forward = True
 
-	return possible
+	return moving_forward
 
 
 def two_spaces_away(x,y,piece):
