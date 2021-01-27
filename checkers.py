@@ -79,11 +79,11 @@ def get_board_size():
 	refresh(3)
 
 
-def valid_board_size(input):
+def valid_board_size(input_size):
 	global board_size
 
 	try:
-		board_size = int(input)
+		board_size = int(input_size)
 
 		if not in_range(board_size, 12, 6):
 			refresh(2)
@@ -159,6 +159,7 @@ def get_nonplayable_rows():
 			cap_row = cap_row + '   ' + str(i + 1)
 		else:
 			cap_row = cap_row + '  ' + str(i + 1)
+
 	filler_row = '   ' + ('*---' * board_size) + '*'
 
 	return cap_row, filler_row
@@ -324,6 +325,14 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 		else:
 			refresh(4)
 
+	jumping, turn = update_pieces()
+	refresh(refresh_rate)
+	display_board(turn, opponent_token)
+
+	return turn, jumping, move_selection
+
+
+def update_pieces(player_pieces, opponent_pieces, turn, token, opponent_token, piece_selection, move_selection, piece_type, jumped_piece, jumped_piece_type):
 	jumping = False
 	if last_token_removed != opponent_token:
 		pieces_removed.clear()
@@ -334,15 +343,13 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 		if can_jump(move_selection, player_pieces, opponent_pieces, token):
 			turn = turn - 1
 			jumping = True
-	update_pieces(player_pieces,piece_selection,move_selection,piece_type)
+	update_piece_ownership(player_pieces,piece_selection,move_selection,piece_type)
 	king_me(move_selection, player_pieces)
-	refresh(refresh_rate)
-	display_board(turn, opponent_token)
 
-	return turn, jumping, move_selection
+	return jumping, turn
 
 
-def update_pieces(player_pieces,piece_selection,move_selection,piece_type):
+def update_piece_ownership(player_pieces,piece_selection,move_selection,piece_type):
 	global last_piece_moved
 
 	player_pieces.pop(str(piece_selection))
@@ -521,19 +528,31 @@ def can_move(selection, player_pieces, opponent_pieces, token):
 
 	possible = False
 	if piece_type == 'K' or token == red_initial:
-		if str([selection[0] - 1, selection[1] - 1]) not in player_pieces and str([selection[0] - 1, selection[1] - 1]) not in opponent_pieces:
-			if selection[0]-1 >= 0 and selection[1]-1 >= 0:
-				possible = True
-		if str([selection[0] - 1, selection[1] + 1]) not in player_pieces and str([selection[0] - 1, selection[1] + 1]) not in opponent_pieces:
-			if selection[0]-1 >= 0 and selection[1]+1 <= (board_size - 1):
-				possible = True
+		possible = red_can_move()
 	if piece_type == 'K' or token == black_initial:
-		if str([selection[0] + 1, selection[1] - 1]) not in player_pieces and str([selection[0] + 1, selection[1] - 1]) not in opponent_pieces:
-			if selection[0]+1 <= (board_size - 1) and selection[1]-1 >= 0:
-				possible = True
-		if str([selection[0] + 1, selection[1] + 1]) not in player_pieces and str([selection[0] + 1, selection[1] + 1]) not in opponent_pieces:
-			if selection[0]+1 <= (board_size - 1) and selection[1]+1 <= (board_size - 1):
-				possible = True
+		possible = black_can_move()
+
+	return possible
+
+
+def red_can_move(possible, selection, player_pieces, opponent_pieces):
+	if str([selection[0] - 1, selection[1] - 1]) not in player_pieces and str([selection[0] - 1, selection[1] - 1]) not in opponent_pieces:
+		if selection[0]-1 >= 0 and selection[1]-1 >= 0:
+			possible = True
+	if str([selection[0] - 1, selection[1] + 1]) not in player_pieces and str([selection[0] - 1, selection[1] + 1]) not in opponent_pieces:
+		if selection[0]-1 >= 0 and selection[1]+1 <= (board_size - 1):
+			possible = True
+
+	return possible
+
+
+def black_can_move(possible, selection, player_pieces, opponent_pieces):
+	if str([selection[0] + 1, selection[1] - 1]) not in player_pieces and str([selection[0] + 1, selection[1] - 1]) not in opponent_pieces:
+		if selection[0]+1 <= (board_size - 1) and selection[1]-1 >= 0:
+			possible = True
+	if str([selection[0] + 1, selection[1] + 1]) not in player_pieces and str([selection[0] + 1, selection[1] + 1]) not in opponent_pieces:
+		if selection[0]+1 <= (board_size - 1) and selection[1]+1 <= (board_size - 1):
+			possible = True
 
 	return possible
 
