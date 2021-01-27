@@ -324,7 +324,7 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 		else:
 			refresh(4)
 
-	jumping, turn = update_pieces()
+	jumping, turn = update_pieces(player_pieces, opponent_pieces, turn, token, opponent_token, piece_selection, move_selection, piece_type, jumped_piece, jumped_piece_type)
 	refresh(refresh_rate)
 	display_board(turn, opponent_token)
 
