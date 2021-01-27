@@ -627,7 +627,7 @@ def remove_characters(back_to_list):
 	return back_to_list
 
 
-def convert_characters_to_numbers(back_to_list)
+def convert_characters_to_numbers(back_to_list):
 	new_list = []
 	for number in back_to_list:
 		new_list.append(int(number))
