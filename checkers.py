@@ -1,5 +1,4 @@
 import sys, time
-from board import *
 
 # TODO make validation messages more meaningful
 # TODO add comments
