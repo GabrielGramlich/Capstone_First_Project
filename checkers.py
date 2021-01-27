@@ -512,7 +512,19 @@ def empty(x,y,player_pieces,opponent_pieces):
 
 
 def one_space_away(x,y,piece):
-	if (x - 1 == piece[0] or x + 1 == piece[0]) and (y - 1 == piece[1] or y + 1 == piece[1]):
+	if ((x - 1 == piece[0] or x + 1 == piece[0]) and (y - 1 == piece[1] or y + 1 == piece[1]) and not off_board([x,y])):
+		print(str(x) + "," + str(y))
+		print(piece)
+		time.sleep(10)
+		return True
+	else:
+		return False
+
+
+def off_board(selection):
+	if selection[1] < 0 or selection [1] >= board_size:
+		return True
+	elif selection[0] < 0 or selection [0] >= board_size:
 		return True
 	else:
 		return False
@@ -535,7 +547,7 @@ def is_moving_forward(old_position, new_position, player_pieces, token):
 
 
 def two_spaces_away(x,y,piece):
-	if (x - 2 == piece[0] or x + 2 == piece[0]) and (y - 2 == piece[1] or y + 2 == piece[1]):
+	if ((x - 2 == piece[0] or x + 2 == piece[0]) and (y - 2 == piece[1] or y + 2 == piece[1]) and not off_board([x,y])):
 		return True
 	else:
 		return False
