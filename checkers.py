@@ -1,4 +1,5 @@
 import sys, time
+from board import *
 
 # TODO make validation messages more meaningful
 # TODO add comments
@@ -18,57 +19,94 @@ last_piece_moved = []
 black_count = 0
 red_count = 0
 
+
 def main():
 	setup_board()
 	play()
 
 
 def setup_board():
-	get_players_initials()
+	get_players_info()
 	get_board_size()
 	create_starting_pieces()
+	get_piece_counts()
 	display_board(1, black_initial)
 
 
-def get_players_initials():
-	global black_name, red_name, black_initial, red_initial
-	print('\n\n')
-	print('Let\'s get your names.')
+def get_piece_counts():
+	global black_count, red_count
+
+	black_count = len(black_pieces)
+	red_count = len(red_pieces)
+
+
+def get_players_info():
+	print('\n\n\nLet\'s get your names.')
 	while True:
-		black_name = input('What\'s player 1\'s name? ').title()
-		red_name = input('What\'s player 2\'s name? ').title()
-		black_initial = black_name[0:1]
-		red_initial = red_name[0:1]
-		if black_initial != red_initial:
-			refresh(3)
+		get_player_names()
+		get_players_initials()
+		refresh(3)
+		if valid_initials():
 			break
 		else:
-			refresh(3)
 			print('First initials can\'t match.')
 
 
-def get_board_size():
-	global board_size
+def get_player_names():
+	global black_name, red_name
 
+	black_name = input('What\'s player 1\'s name? ').title()
+	red_name = input('What\'s player 2\'s name? ').title()
+
+
+def get_players_initials():
+	global black_initial, red_initial
+
+	black_initial = black_name[0:1]
+	red_initial = red_name[0:1]
+
+
+def valid_initials():
+	return black_initial != red_initial
+
+
+def get_board_size():
 	print('What size board do you want to play with?')
 	print('Must be an even number between 6 and 12.')
 	bad = True
 	while bad:
-		try:
-			board_size = int(input('Your selection: '))
-			if board_size % 2 == 0:
-				if board_size <= 12 and board_size >= 6:
-					bad = False
-				else:
-					refresh(2)
-					print('Input must be between 6 and 12.')
-			else:
-				refresh(2)
-				print('Input must be an even number.')
-		except ValueError:
-			refresh(2)
-			print('Input must be an integer.')
+		bad = valid_board_size(input('Your selection: '))
 	refresh(3)
+
+
+def valid_board_size(input):
+	global board_size
+
+	try:
+		board_size = int(input)
+
+		if not in_range(board_size, 12, 6):
+			refresh(2)
+			print('Input must be between 6 and 12.')
+			return True
+		elif not is_even(board_size):
+			refresh(2)
+			print('Input must be an even number.')
+			return True
+		else:
+			return False
+	except ValueError:
+		refresh(2)
+		print('Input must be an integer.')
+		return True
+
+
+def in_range(test_number, high, low):
+	return test_number <= high and test_number >= low
+
+
+def is_even(test_number):
+	return test_number % 2 == 0
 
 
 def refresh(lines):
@@ -82,26 +120,29 @@ def refresh(lines):
 
 
 def create_starting_pieces():
-	global black_count, red_count
-
 	for x in range(board_size):
 		for y in range(board_size):
-			if x < ((board_size - 2) / 2):	# If on black's side of the board
-				if x % 2 != 0:
-					if y % 2 != 0:
-						black_pieces[str([x,y])] = 'N'
-				else:
-					if y % 2 == 0:
-						black_pieces[str([x,y])] = 'N'
-			elif x > (((board_size - 2) / 2) + 1):	# If on red's side of the board
-				if x % 2 != 0:
-					if y % 2 != 0:
-						red_pieces[str([x,y])] = 'N'
-				else:
-					if y % 2 == 0:
-						red_pieces[str([x,y])] = 'N'
-	black_count = len(black_pieces)
-	red_count = len(red_pieces)
+			if is_black(x):
+				create_piece(x,y,black_pieces)
+			elif is_red(x):
+				create_piece(x,y,red_pieces)
+
+
+def is_black(x):
+	return x < ((board_size - 2) / 2)
+
+
+def is_red(x):
+	return x > ((board_size - 2) / 2) + 1
+
+
+def create_piece(x,y,pieces):
+	if not is_even(x):
+		if not is_even(y):
+			pieces[str([x,y])] = 'N'
+	else:
+		if is_even(y):
+			pieces[str([x,y])] = 'N'
 
 
 def display_board(turn, token):
@@ -126,45 +167,83 @@ def get_nonplayable_rows():
 def get_playable_rows():
 	playable_rows = []
 	for x in range(board_size):
-		if x < 9:
-			row = str(x + 1) + '  |'
-		else:
-			row = str(x + 1) + ' |'
+		row = start_row(x)
 		for y in range(board_size):
-			if [x,y] == last_piece_moved:
-				if str([x,y]) in black_pieces:
-					row = row + '|' + black_initial + '||'
-				elif str([x,y]) in red_pieces:
-					row = row + '|' + red_initial + '||'
-			elif str([x,y]) in black_pieces:
-				if black_pieces.get(str([x,y])) == 'N':
-					row = row + ' ' + black_initial + ' |'
-				elif black_pieces.get(str([x,y])) == 'K':
-					row = row + '<' + black_initial + '>|'
-			elif str([x,y]) in red_pieces:
-				if red_pieces.get(str([x,y])) == 'N':
-					row = row + ' ' + red_initial + ' |'
-				elif red_pieces.get(str([x,y])) == 'K':
-					row = row + '<' + red_initial + '>|'
-			elif (x % 2 == 0 and y % 2 != 0) or (x % 2 != 0 and y % 2 == 0):
-				row = row + ' * |'
-			elif str([x,y]) in pieces_removed:
-				if pieces_removed.get(str([x,y])) == 'N':
-					row = row + '>' + last_token_removed + '<|'
-				elif pieces_removed.get(str([x,y])) == 'K':
-					row = row + '{' + last_token_removed + '}|'
-			else:
-				row = row + '   |'
-		if x < 9:
-			row = row + '  ' + str(x + 1)
-		else:
-			row = row + ' ' + str(x + 1)
+			row = row + continue_row(str([x,y]),x,y)
+		row = row + finish_row(x)
 		playable_rows.append(row)
 
 	return playable_rows
 
 
+def continue_row(piece,x,y):
+	if piece == str(last_piece_moved):
+		return get_moved_piece_section(piece)
+	elif piece in black_pieces:
+		return get_normal_piece_section(piece,black_pieces,black_initial)
+	elif piece in red_pieces:
+		return get_normal_piece_section(piece,red_pieces,red_initial)
+	elif is_off_square(x,y):
+		return ' * |'
+	elif piece in pieces_removed:
+		return get_removed_piece_section(piece)
+	else:
+		return '   |'
+
+
+def get_moved_piece_section(piece):
+	if piece in black_pieces:
+		return '|' + black_initial + '||'
+	elif piece in red_pieces:
+		return '|' + red_initial + '||'
+
+
+def get_normal_piece_section(piece,pieces,initial):
+	if pieces.get(piece) == 'N':
+		return ' ' + initial + ' |'
+	elif pieces.get(piece) == 'K':
+		return '<' + initial + '>|'
+
+
+def get_removed_piece_section(piece):
+	if pieces_removed.get(piece) == 'N':
+		return '>' + last_token_removed + '<|'
+	elif pieces_removed.get(piece) == 'K':
+		return '{' + last_token_removed + '}|'
+
+
+def is_off_square(x,y):
+	return (x % 2 == 0 and y % 2 != 0) or (x % 2 != 0 and y % 2 == 0)
+
+
+def start_row(x):
+	if x < 9:
+		return str(x + 1) + '  |'
+	else:
+		return str(x + 1) + ' |'
+
+
+def finish_row(x):
+	if x < 9:
+		return '  ' + str(x + 1)
+	else:
+		return ' ' + str(x + 1)
+
+
 def get_display_rows(turn, token):
+	pad_count = get_pad_count()
+	info_row = 'Pieces remaining:'
+	black_row = get_player_row(black_name,pad_count,black_count)
+	red_row = get_player_row(red_name,pad_count,red_count)
+	if token == black_initial:
+		current_player_row = 'Round {0}: {1}'.format(turn, black_name)
+	elif token == red_initial:
+		current_player_row = 'Round {0}: {1}'.format(turn, red_name)
+
+	return info_row, black_row, red_row, current_player_row
+
+
+def get_pad_count():
 	pad_count = 15
 	if len(black_name) >= len(red_name):
 		if len(black_name) > pad_count:
@@ -172,15 +251,12 @@ def get_display_rows(turn, token):
 	else:
 		if len(red_name) > pad_count:
 			pad_count = len(red_name) + 3
-	info_row = 'Pieces remaining:'
-	black_row = '{0}{1}'.format(pad_string(black_name + ':', pad_count, False), black_count)
-	red_row = '{0}{1}'.format(pad_string(red_name + ':', pad_count, False), red_count)
-	if token == black_initial:
-		current_player_row = 'Round {0}: {1}'.format(turn, black_name)
-	elif token == red_initial:
-		current_player_row = 'Round {0}: {1}'.format(turn, red_name)
 
-	return info_row, black_row, red_row, current_player_row
+	return pad_count
+
+
+def get_player_row(player_name,pad_count,player_count):
+	return '{0}{1}'.format(pad_string(player_name + ':', pad_count, False), player_count)
 
 
 def pad_string(string, pad_count, is_left=True, character=' '):
@@ -235,8 +311,64 @@ def play():
 
 
 def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, token, opponent_token):
-	global pieces_removed, last_token_removed, black_count, red_count, last_piece_moved
+	piece_selection = get_piece(jumping, moved_piece, player_pieces, opponent_pieces, token)
+	refresh_rate = 36 - ((12-board_size)*2)
+	refresh(refresh_rate)
+	display_board(turn, token)
 
+	while True:
+		move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces, token)
+		response = confirm_selection()
+		if response == 'y':
+			break
+		else:
+			refresh(4)
+
+	jumping = False
+	if last_token_removed != opponent_token:
+		pieces_removed.clear()
+
+	if jumped_piece != None:
+		update_counts(opponent_token)
+		update_jumped_pieces(opponent_pieces,jumped_piece,jumped_piece_type,opponent_token)
+		if can_jump(move_selection, player_pieces, opponent_pieces, token):
+			turn = turn - 1
+			jumping = True
+	update_pieces(player_pieces,piece_selection,move_selection,piece_type)
+	king_me(move_selection, player_pieces)
+	refresh(refresh_rate)
+	display_board(turn, opponent_token)
+
+	return turn, jumping, move_selection
+
+
+def update_pieces(player_pieces,piece_selection,move_selection,piece_type):
+	global last_piece_moved
+
+	player_pieces.pop(str(piece_selection))
+	player_pieces[str(move_selection)] = piece_type
+	last_piece_moved.clear()
+	last_piece_moved = move_selection
+
+
+def update_jumped_pieces(opponent_pieces,jumped_piece,jumped_piece_type,opponent_token):
+	global last_token_removed, pieces_removed
+
+	opponent_pieces.pop(str([int(jumped_piece[0]),int(jumped_piece[1])]))
+	pieces_removed[str([int(jumped_piece[0]),int(jumped_piece[1])])] = jumped_piece_type
+	last_token_removed = opponent_token
+
+
+def update_counts(opponent_token):
+	global black_count, red_count
+
+	if opponent_token == black_initial:
+		black_count = black_count - 1
+	elif opponent_token == red_initial:
+		red_count = red_count - 1
+
+
+def get_piece(jumping, moved_piece, player_pieces, opponent_pieces, token):
 	if jumping:
 		print('\nLast piece moved:')
 		print(str(moved_piece[1] + 1) + ',' + str(moved_piece[0] + 1))
@@ -248,53 +380,24 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 			response = confirm_selection()
 			if response == 'y':
 				break
-
-	refresh_rate = 36 - ((12-board_size)*2)
-	refresh(refresh_rate)
-	display_board(turn, token)
-
-	while True:
-		move_selection, piece_type, jumped_piece, jumped_piece_type = select_move(piece_selection, player_pieces, opponent_pieces, token)
-		response = confirm_selection()
-		if response == 'y':
-			break
-
-	jumping = False
-	if last_token_removed != opponent_token:
-		pieces_removed.clear()
-
-	if jumped_piece != None:
-		if opponent_token == black_initial:
-			black_count = black_count - 1
-		elif opponent_token == red_initial:
-			red_count = red_count - 1
-		opponent_pieces.pop(str([int(jumped_piece[0]),int(jumped_piece[1])]))
-		pieces_removed[str([int(jumped_piece[0]),int(jumped_piece[1])])] = jumped_piece_type
-		last_token_removed = opponent_token
-		if can_jump(move_selection, player_pieces, opponent_pieces, token):
-			turn = turn - 1
-			jumping = True
-	player_pieces.pop(str(piece_selection))
-	player_pieces[str(move_selection)] = piece_type
-	last_piece_moved.clear()
-	last_piece_moved = move_selection
-	king_me(move_selection, player_pieces)
-	refresh(refresh_rate)
-	display_board(turn, opponent_token)
-
-	return turn, jumping, move_selection
+			else:
+				refresh(4)
+	return piece_selection
 
 
 def confirm_selection():
 	response = ''
-	while response != 'n' and response != 'y':
+	while response_invalid(response):
 		response = input('Are you satisfied with your selection? (y/n) ').lower()
-		if response == 'n':
-			refresh(5)
-		elif response == 'y':
+		if response_invalid(response):
 			refresh(1)
+	refresh(1)
 
 	return response
+
+
+def response_invalid(response):
+	return response != 'n' and response != 'y'
 
 
 def select_piece(player_pieces,opponent_pieces,token):
