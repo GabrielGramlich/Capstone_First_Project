@@ -289,31 +289,24 @@ def play():
 	move_selection = []
 	while True:
 		turn = turn + 1
-		if turn % 2 != 0:
-			turn, jumping, move_selection = player_turn(black_pieces, red_pieces, turn, jumping, move_selection, black_initial, red_initial)
-		else:
-			turn, jumping, move_selection = player_turn(red_pieces, black_pieces, turn, jumping, move_selection, red_initial, black_initial)
-		if len(black_pieces) == 0:
-			print('X\'s win!')
+		turn, jumping, move_selection = start_turn(turn, jumping, move_selection)
+		break_loop = end_game(turn)
+		if break_loop:
 			break
-		elif len(red_pieces) == 0:
-			print('O\'s win!')
-			break
-		if turn % 2 == 0:
-			stalemate = no_moves_left(red_pieces, black_pieces,red_initial)
-			if stalemate:
-				print('No moves left. Stalemate!')
-				break
-		elif turn %2 != 0:
-			stalemate = no_moves_left(black_pieces, red_pieces,black_initial)
-			if stalemate:
-				print('No no_moves_left. Stalemate!')
-				break
+
+
+def start_turn(turn, jumping, move_selection):
+	if turn % 2 != 0:
+		turn, jumping, move_selection = player_turn(black_pieces, red_pieces, turn, jumping, move_selection, black_initial, red_initial)
+	else:
+		turn, jumping, move_selection = player_turn(red_pieces, black_pieces, turn, jumping, move_selection, red_initial, black_initial)
+
+	return turn, jumping, move_selection
 
 
 def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, token, opponent_token):
 	piece_selection = get_piece(jumping, moved_piece, player_pieces, opponent_pieces, token)
-	refresh_rate = 36 - ((12-board_size)*2)
+	refresh_rate = set_refresh_rate(36):
 	refresh(refresh_rate)
 	display_board(turn, token)
 	move_selection, piece_type, jumped_piece, jumped_piece_type = select_valid_move(piece_selection, player_pieces, opponent_pieces, token)
@@ -322,6 +315,10 @@ def player_turn(player_pieces, opponent_pieces, turn, jumping, moved_piece, toke
 	display_board(turn, opponent_token)
 
 	return turn, jumping, move_selection
+
+
+def set_refresh_rate(rate):
+	return rate - ((12-board_size)*2)
 
 
 def get_piece(jumping, moved_piece, player_pieces, opponent_pieces, token):
@@ -610,6 +607,44 @@ def king_me(move_selection, player_pieces):
 	if move_selection[0] == 0 or move_selection[0] == board_size - 1:
 		player_pieces.pop(str(move_selection))
 		player_pieces[str(move_selection)]='K'
+
+
+def end_game(turn):
+	break_loop = declare_winner()
+	break_loop = declare_stalemate(turn, break_loop)
+
+	return break_loop
+
+
+def declare_winner():
+	if len(black_pieces) == 0:
+		print('X\'s win!')
+		return True
+	elif len(red_pieces) == 0:
+		print('O\'s win!')
+		return True
+	else:
+		return False
+
+
+def declare_stalemate(turn, break_loop):
+	if turn % 2 == 0:
+		stalemate = no_moves_left(red_pieces, black_pieces,red_initial)
+		if stalemate:
+			print('No moves left. Stalemate!')
+			return True
+		else:
+			return break_loop
+	elif turn %2 != 0:
+		stalemate = no_moves_left(black_pieces, red_pieces,black_initial)
+		if stalemate:
+			print('No no_moves_left. Stalemate!')
+			return True
+		else:
+			return break_loop
+	else:
+		return break_loop
+
 
 
 def no_moves_left(player_pieces, opponent_pieces, token):
